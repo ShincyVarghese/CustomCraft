@@ -1,0 +1,62 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}
+My Orders | CustomCraft
+{% endblock %}
+
+{% block content %}
+
+<section class="section-pad">
+
+    <div class="container">
+
+        <div class="section-head">
+
+            <span class="eyebrow">
+                Your Orders
+            </span>
+
+            <h1>
+                My Orders
+            </h1>
+
+            <p>
+                View and track your CustomCraft orders.
+            </p>
+
+        </div>
+
+
+        <!-- Empty orders -->
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                <i class="fa-solid fa-box"></i>
+            </div>
+
+            <h3>
+                No orders yet
+            </h3>
+
+            <p>
+                Once you place an order, your order
+                details will appear here.
+            </p>
+
+            <br>
+
+            <a
+                href="{% url 'shop' %}"
+                class="btn btn-primary"
+            >
+                Start Shopping
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

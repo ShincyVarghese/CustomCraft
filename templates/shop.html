@@ -1,0 +1,202 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Shop | CustomCraft
+{% endblock %}
+
+{% block content %}
+
+<section class="shop-section">
+
+    <div class="shop-container">
+
+        <!-- SHOP HEADER -->
+        <div class="shop-header">
+            <p class="shop-small-title">
+                CUSTOMCRAFT COLLECTION
+            </p>
+
+            <h1>Shop Personalized Gifts</h1>
+
+            <p>
+                Find something special for every person
+                and every occasion.
+            </p>
+        </div>
+
+
+        <!-- SHOP LAYOUT -->
+        <div class="shop-layout">
+
+            <!-- CATEGORY SIDEBAR -->
+            <aside class="shop-sidebar">
+
+                <h3>Categories</h3>
+
+                <a href="{% url 'shop' %}"
+                   class="{% if not request.GET.category %}active{% endif %}">
+                    All Gifts
+                </a>
+
+                <a href="{% url 'shop' %}?category=Birthday Gifts"
+                   class="{% if request.GET.category == 'Birthday Gifts' %}active{% endif %}">
+                    Birthday Gifts
+                </a>
+
+                <a href="{% url 'shop' %}?category=Personalized Gifts"
+                   class="{% if request.GET.category == 'Personalized Gifts' %}active{% endif %}">
+                    Personalized Gifts
+                </a>
+
+                <a href="{% url 'shop' %}?category=Wedding Gifts"
+                   class="{% if request.GET.category == 'Wedding Gifts' %}active{% endif %}">
+                    Wedding Gifts
+                </a>
+
+                <a href="{% url 'shop' %}?category=Anniversary Gifts"
+                   class="{% if request.GET.category == 'Anniversary Gifts' %}active{% endif %}">
+                    Anniversary Gifts
+                </a>
+
+                <a href="{% url 'shop' %}?category=Gift Hampers"
+                   class="{% if request.GET.category == 'Gift Hampers' %}active{% endif %}">
+                    Gift Hampers
+                </a>
+
+                <a href="{% url 'shop' %}?category=Handmade Gifts"
+                   class="{% if request.GET.category == 'Handmade Gifts' %}active{% endif %}">
+                    Handmade Gifts
+                </a>
+
+            </aside>
+
+
+            <!-- PRODUCTS AREA -->
+            <div class="shop-products">
+
+                <div class="shop-products-top">
+                    <p>
+                        {{ products|length }}
+                        {% if products|length == 1 %}
+                            Product
+                        {% else %}
+                            Products
+                        {% endif %}
+                    </p>
+                </div>
+
+
+                <!-- PRODUCT GRID -->
+                <div class="shop-product-grid">
+
+                    {% for product in products %}
+
+                        <div class="shop-product-card">
+
+                            <!-- PRODUCT IMAGE -->
+                            <a href="{% url 'product_detail' product.id %}"
+                               class="shop-product-image">
+
+                                {% if product.image %}
+
+                                    <img
+                                        src="{{ product.image.url }}"
+                                        alt="{{ product.name }}"
+                                    >
+
+                                {% else %}
+
+                                    <div class="shop-no-image">
+                                        <span>🎁</span>
+                                        <p>Image coming soon</p>
+                                    </div>
+
+                                {% endif %}
+
+                            </a>
+
+
+                            <!-- PRODUCT INFORMATION -->
+                            <div class="shop-product-info">
+
+                                <p class="shop-product-category">
+                                    {{ product.category.name }}
+                                </p>
+
+                                <h3>
+                                    <a href="{% url 'product_detail' product.id %}">
+                                        {{ product.name }}
+                                    </a>
+                                </h3>
+
+                                <p class="shop-product-description">
+                                    {{ product.description|truncatewords:12 }}
+                                </p>
+
+
+                                <!-- PRICE AND ACTION -->
+                                <div class="shop-product-bottom">
+
+                                    <strong>
+                                        ₹{{ product.price }}
+                                    </strong>
+
+                                    {% if product.stock > 0 %}
+
+                                        <a
+                                            href="{% url 'product_detail' product.id %}"
+                                            class="shop-view-btn"
+                                        >
+                                            View Product →
+                                        </a>
+
+                                    {% else %}
+
+                                        <span class="shop-out-of-stock">
+                                            Out of Stock
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                    {% empty %}
+
+                        <!-- EMPTY STATE -->
+                        <div class="no-products">
+
+                            <span>🎁</span>
+
+                            <h3>No products available</h3>
+
+                            <p>
+                                We couldn't find any gifts in this
+                                collection. Please explore another category.
+                            </p>
+
+                            <a href="{% url 'shop' %}">
+                                View All Gifts
+                            </a>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

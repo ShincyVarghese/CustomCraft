@@ -1,0 +1,380 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="cc-slider" id="ccSlider">
+
+    <!-- Slide 1 -->
+    <div class="cc-slide active">
+        <img src="{% static 'accounts/images/categories/picture.jpg.jpg' %}"
+             alt="CustomCraft personalized gift hamper">
+
+        <div class="cc-slide-content">
+            <p class="cc-eyebrow">GIFTS MADE PERSONAL</p>
+
+            <h1>Make Every <span>Moment Special.</span></h1>
+
+            <p class="cc-description">
+                Thoughtful gifts, handmade treasures, and
+                beautiful hampers created for your favourite people.
+            </p>
+
+            <div class="cc-buttons">
+                <a href="{% url 'shop' %}" class="cc-primary-btn">
+                    EXPLORE GIFTS →
+                </a>
+
+                <a href="{% url 'shop' %}" class="cc-secondary-btn">
+                    BUILD MY BOX
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="cc-slide">
+        <img src="{% static 'accounts/images/categories/handmade.jpg' %}"
+             alt="Handmade gifts and flowers">
+
+        <div class="cc-slide-content">
+            <p class="cc-eyebrow">HANDMADE WITH LOVE</p>
+
+            <h1>Little Gifts, <span>Big Feelings.</span></h1>
+
+            <p class="cc-description">
+                Discover crochet flowers, keepsakes, and
+                thoughtful surprises made to bring joy.
+            </p>
+
+            <div class="cc-buttons">
+                <a href="{% url 'shop' %}" class="cc-primary-btn">
+                    DISCOVER GIFTS →
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="cc-slide">
+        <img src="{% static 'accounts/images/categories/image.jpg.jpg' %}"
+             alt="Personalized gift box">
+
+        <div class="cc-slide-content">
+            <p class="cc-eyebrow">YOUR GIFT, YOUR WAY</p>
+
+            <h1>Create Something <span>Truly Yours.</span></h1>
+
+            <p class="cc-description">
+                Choose your favourites and create a special
+                gift box for every occasion.
+            </p>
+
+            <div class="cc-buttons">
+                <a href="{% url 'shop' %}" class="cc-primary-btn">
+                    START EXPLORING →
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Previous button -->
+    <button type="button"
+            class="cc-arrow cc-prev"
+            aria-label="Previous slide">
+        &#10094;
+    </button>
+
+    <!-- Next button -->
+    <button type="button"
+            class="cc-arrow cc-next"
+            aria-label="Next slide">
+        &#10095;
+    </button>
+
+    <!-- Slide indicators -->
+    <div class="cc-dots">
+        <button type="button"
+                class="cc-dot active"
+                aria-label="Show slide 1"></button>
+
+        <button type="button"
+                class="cc-dot"
+                aria-label="Show slide 2"></button>
+
+        <button type="button"
+                class="cc-dot"
+                aria-label="Show slide 3"></button>
+    </div>
+
+</section>
+
+<!-- Load JavaScript after the slider HTML -->
+<script src="{% static 'accounts/js/slider.js' %}" defer></script>
+
+
+
+
+
+
+
+<!-- =========================================================
+     2. SHOP BY OCCASIONS
+========================================================= -->
+
+<section class="occasion-section">
+    <div class="occasion-container">
+
+        <div class="occasion-heading">
+            <span>FIND SOMETHING SPECIAL</span>
+            <h2>Shop By Occasions</h2>
+            <p>Thoughtful gifts for every special moment.</p>
+        </div>
+
+        <div class="occasion-grid">
+
+            <a href="{% url 'shop' %}?category=Wedding Gifts"
+               class="occasion-card">
+                <div class="img-wrapper">
+                    <img
+                        src="{% static 'accounts/images/categories/wedding.jpg.jpg' %}"
+                        alt="Wedding Gifts">
+                </div>
+                <h3>Birthday Gifts</h3>
+            </a>
+
+            <a href="{% url 'shop' %}?category=Corporate Gifts"
+               class="occasion-card">
+                <div class="img-wrapper">
+                    <img
+                        src="{% static 'accounts/images/categories/birthday.jpg.webp' %}"
+                        alt="Corporate Gifts">
+                </div>
+                <h3>Self-Care & Beauty Hampers</h3>
+            </a>
+
+            <a href="{% url 'shop' %}?category=Baby Gifts"
+               class="occasion-card">
+                <div class="img-wrapper">
+                    <img
+                        src="{% static 'accounts/images/categories/babygifts.jpg.jpg' %}"
+                        alt="Baby Gifts">
+                </div>
+                <h3>Baby & Newborn Gifts</h3>
+            </a>
+
+            <a href="{% url 'shop' %}?category=Baby Clothing"
+               class="occasion-card">
+                <div class="img-wrapper">
+                    <img
+                        src="{% static 'accounts/images/categories/babyclothing.jpg' %}"
+                        alt="Baby Clothing">
+                </div>
+                <h3>Baby Clothing</h3>
+            </a>
+
+            <a href="{% url 'shop' %}?category=Birthday Gifts"
+               class="occasion-card">
+                <div class="img-wrapper">
+                    <img
+                        src="{% static 'accounts/images/categories/birthday.jpg.webp' %}"
+                        alt="Birthday Gifts">
+                </div>
+                <h3>Wedding &amp; Special Occasions</h3>
+            </a>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- =========================================================
+     3. TRENDING GIFTS
+========================================================= -->
+
+<section class="trending-section">
+    <div class="container">
+
+        <div class="section-header">
+            <p class="section-small-title">
+                CUSTOMER FAVOURITES
+            </p>
+
+            <h2 class="section-title">
+                Trending Gifts
+            </h2>
+
+            <p class="section-description">
+                Discover personalized gifts everyone will love.
+            </p>
+        </div>
+
+        <div class="trending-grid">
+
+            {% for product in trending_products %}
+
+                <div class="trending-card">
+
+                    <a href="{% url 'product_detail' product.id %}"
+                       class="trending-view-img">
+                      
+
+                        {% if product.image %}
+                            <img
+                                src="{{ product.image.url }}"
+                                alt="{{ product.name }}"
+                                class="trending-product-image">
+                        {% else %}
+                            <div class="no-image">
+                                <span>🎁</span>
+                                <p>Image coming soon</p>
+                            </div>
+                        {% endif %}
+
+                    </a>
+
+                    <div class="trending-card-content">
+
+                        <h3>{{ product.name }}</h3>
+
+                        <p class="trending-price">
+                            ₹{{ product.price }}
+                        </p>
+
+                        {% if product.stock > 0 %}
+                            <a
+                                href="{% url 'product_detail' product.id %}"
+                                class="trending-view-btn">
+                                View Gift
+                            </a>
+                        {% else %}
+                            <span class="out-of-stock">
+                                Currently Unavailable
+                            </span>
+                        {% endif %}
+
+                    </div>
+                </div>
+
+            {% empty %}
+
+                <div class="trending-empty">
+                    <span>🎁</span>
+                    <h3>Our gifts are on their way!</h3>
+                    <p>
+                        Add products through your Django admin
+                        to display them here.
+                    </p>
+
+                    <a href="{% url 'shop' %}" class="primary-btn">
+                        Explore Shop
+                    </a>
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+        <div class="trending-footer">
+            <a href="{% url 'shop' %}" class="secondary-btn">
+                View All Gifts →
+            </a>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- =========================================================
+     4. WHY CUSTOMCRAFT
+========================================================= -->
+
+<section class="why-section">
+    <div class="container">
+
+        <div class="section-header">
+            <p class="section-small-title">
+                WHY CUSTOMCRAFT
+            </p>
+
+            <h2 class="section-title">
+                Made Personal. Made Special.
+            </h2>
+
+            <p class="section-description">
+                We make every gift more meaningful.
+            </p>
+        </div>
+
+        <div class="why-grid">
+
+            <div class="why-card">
+                <div class="why-icon">✨</div>
+
+                <h3>Personalized</h3>
+
+                <p>
+                    Add names, photos and special messages
+                    to make every gift unique.
+                </p>
+            </div>
+
+            <div class="why-card">
+                <div class="why-icon">💙</div>
+
+                <h3>Made With Care</h3>
+
+                <p>
+                    We focus on creating meaningful gifts
+                    for your special moments.
+                </p>
+            </div>
+
+            <div class="why-card">
+                <div class="why-icon">🚚</div>
+
+                <h3>Easy Ordering</h3>
+
+                <p>
+                    Customize your gift and place your
+                    order with ease.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- =========================================================
+     5. FINAL CALL TO ACTION
+========================================================= -->
+
+<section class="cta-section">
+    <div class="container">
+
+        <div class="cta-container">
+
+            <p class="section-small-title">
+                MAKE SOMEONE'S DAY SPECIAL
+            </p>
+
+            <h2>
+                Find a Gift They'll Remember.
+            </h2>
+
+            <p>
+                Create something personal for someone special.
+            </p>
+
+            <a href="{% url 'shop' %}" class="primary-btn">
+                Explore Gifts
+            </a>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

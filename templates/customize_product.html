@@ -1,0 +1,302 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Customize {{ product.name }} | CustomCraft
+{% endblock %}
+
+
+{% block content %}
+
+<section class="customize-section">
+
+    <div class="customize-container">
+
+        <!-- =========================
+             PAGE HEADER
+        ========================== -->
+
+        <div class="customize-header">
+
+            <p class="customize-small-title">
+                MAKE IT PERSONAL
+            </p>
+
+            <h1>
+                Customize Your Gift
+            </h1>
+
+            <p>
+                Add your personal touch and make this gift special.
+            </p>
+
+        </div>
+
+
+        <!-- =========================
+             CUSTOMIZATION LAYOUT
+        ========================== -->
+
+        <div class="customize-layout">
+
+
+            <!-- =========================
+                 PRODUCT PREVIEW
+            ========================== -->
+
+            <div class="customize-preview">
+
+                <div class="customize-image">
+
+                    {% if product.image %}
+
+                        <img
+                            src="{{ product.image.url }}"
+                            alt="{{ product.name }}"
+                        >
+
+                    {% else %}
+
+                        <span>
+                            Product Preview
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="customize-product-info">
+
+                    <p>
+                        {{ product.category.name }}
+                    </p>
+
+                    <h2>
+                        {{ product.name }}
+                    </h2>
+
+                    <strong>
+                        ₹{{ product.price }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =========================
+                 CUSTOMIZATION FORM
+            ========================== -->
+
+            <div class="customize-form-card">
+
+                <div class="customize-form-header">
+
+                    <h2>
+                        Personalize Your Product
+                    </h2>
+
+                    <p>
+                        Enter your customization details.
+                    </p>
+
+                </div>
+
+
+                <!-- IMPORTANT:
+                     POST sends the form data to Django.
+                     multipart/form-data is required
+                     because we are uploading an image.
+                -->
+
+                <form
+                    method="POST"
+                    enctype="multipart/form-data"
+                >
+
+                    {% csrf_token %}
+
+                {% if error %}
+                    <p class="form-error">{{ error }}</p>
+                {% endif %}
+
+                    <!-- =========================
+                         MUG COLOR
+                    ========================== -->
+
+                    <div class="customize-form-group">
+
+                        <label>
+                            Choose Mug Color
+                        </label>
+
+
+                        <div class="color-options">
+
+
+                            <label class="color-option">
+
+                                <input
+                                    type="radio"
+                                    name="color"
+                                    value="White"
+                                    checked
+                                >
+
+                                <span>
+                                    White
+                                </span>
+
+                            </label>
+
+
+                            <label class="color-option">
+
+                                <input
+                                    type="radio"
+                                    name="color"
+                                    value="Black"
+                                >
+
+                                <span>
+                                    Black
+                                </span>
+
+                            </label>
+
+
+                            <label class="color-option">
+
+                                <input
+                                    type="radio"
+                                    name="color"
+                                    value="Blue"
+                                >
+
+                                <span>
+                                    Blue
+                                </span>
+
+                            </label>
+
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- =========================
+                         NAME
+                    ========================== -->
+
+                    <div class="customize-form-group">
+
+                        <label for="name">
+                            Name to Print
+                        </label>
+
+                        <input
+                            type="text"
+                            name="name"
+                            id="name"
+                            placeholder="Enter a name"
+                        >
+
+                    </div>
+
+
+
+                    <!-- =========================
+                         PHOTO UPLOAD
+                    ========================== -->
+
+                    <div class="customize-form-group">
+
+                        <label for="photo">
+                            Upload Photo
+                        </label>
+
+                        <input
+                            type="file"
+                            name="photo"
+                            id="photo"
+                            accept="image/*"
+                        >
+
+                        <small>
+                            Upload a clear photo for personalization.
+                        </small>
+
+                    </div>
+
+
+
+                    <!-- =========================
+                         SPECIAL MESSAGE
+                    ========================== -->
+
+                    <div class="customize-form-group">
+
+                        <label for="message">
+                            Special Message
+                        </label>
+
+                        <textarea
+                            name="message"
+                            id="message"
+                            rows="4"
+                            placeholder="Write your special message..."
+                        ></textarea>
+
+                    </div>
+
+
+
+                    <!-- =========================
+                         QUANTITY
+                    ========================== -->
+
+                    <div class="customize-form-group">
+
+                        <label for="quantity">
+                            Quantity
+                        </label>
+
+                        <input
+                            type="number"
+                            name="quantity"
+                            id="quantity"
+                            value="1"
+                            min="1"
+                            max="{{ product.stock }}"
+                        >
+
+                    </div>
+
+
+
+                    <!-- =========================
+                         SUBMIT BUTTON
+                    ========================== -->
+
+                    <button
+                        type="submit"
+                        class="customize-add-cart"
+                    >
+                        Add Customized Product to Cart
+                    </button>
+
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

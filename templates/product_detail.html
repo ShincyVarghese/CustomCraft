@@ -1,0 +1,132 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="product-detail-section">
+
+    <div class="product-detail-container">
+
+        <!-- Product Image -->
+        <div class="product-detail-image">
+            {% if product.image %}
+                <img src="{{ product.image.url }}"
+                     alt="{{ product.name }}">
+            {% else %}
+                <div class="no-product-image">
+                    Image not available
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Product Information -->
+        <div class="product-detail-info">
+
+            <p class="product-category">
+                {{ product.category.name }}
+            </p>
+
+            <h1>{{ product.name }}</h1>
+
+            <p class="product-price">
+                ₹{{ product.price }}
+            </p>
+
+            <p class="product-description">
+                {{ product.description }}
+            </p>
+
+            <!-- Stock Status -->
+            {% if product.stock > 0 %}
+                <p class="stock-available">
+                    ✓ In Stock
+                </p>
+            {% else %}
+                <p class="stock-unavailable">
+                    Currently unavailable
+                </p>
+            {% endif %}
+
+            <!-- Error Message -->
+            {% if error %}
+                <p class="product-error">
+                    {{ error }}
+                </p>
+            {% endif %}
+
+            {% if product.stock > 0 %}
+
+                <!-- Quantity Form -->
+                <form
+                    method="post"
+                    action="{% url 'add_to_cart' product.id %}"
+                    id="add-cart-form"
+                    class="product-quantity-form">
+
+                    {% csrf_token %}
+
+                    <label for="quantity">
+                        Quantity
+                    </label>
+
+                    <input
+                        type="number"
+                        id="quantity"
+                        name="quantity"
+                        value="1"
+                        min="1"
+                        max="{{ product.stock }}"
+                        required
+                    >
+
+                </form>
+
+                <!-- Action Buttons -->
+                <div class="product-action-buttons">
+
+                    <!-- Wishlist -->
+                    <button
+                        type="button"
+                        class="wishlist-btn"
+                        onclick="alert('Wishlist feature will be added soon!')">
+                        ♡ Add to Wishlist
+                    </button>
+
+                    <!-- Customize Product -->
+                    <a
+                        href="{% url 'customize_product' product.id %}"
+                        class="customize-btn">
+                        Customize Product
+                    </a>
+
+                    <!-- Add to Cart -->
+                    <button
+                        type="submit"
+                        form="add-cart-form"
+                        class="add-cart-btn">
+                        Add to Cart
+                    </button>
+
+                </div>
+
+            {% endif %}
+
+            <!-- Additional Information -->
+            <div class="product-extra-info">
+
+                <p>✓ Carefully prepared for you</p>
+
+                <p>🎁 Make your gift personal</p>
+
+                <p>♡ Made for special moments</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

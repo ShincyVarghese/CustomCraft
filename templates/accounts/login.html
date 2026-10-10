@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Login | CustomCraft
+{% endblock %}
+
+
+{% block content %}
+
+<section class="login-section">
+
+    <div class="login-container">
+
+        <!-- Left Side -->
+
+        <div class="login-intro">
+
+            <p class="login-small-title">
+                WELCOME BACK
+            </p>
+
+            <h1>
+                Login to
+                <span>CustomCraft</span>
+            </h1>
+
+            <p class="login-description">
+                Sign in to continue shopping and
+                manage your personalized gifts.
+            </p>
+
+        </div>
+
+
+        <!-- Login Card -->
+
+        <div class="login-card">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <div class="form-group">
+
+                    <label for="username">
+                        Username
+                    </label>
+
+                    <input
+                        type="text"
+                        name="username"
+                        id="username"
+                        placeholder="Enter your username"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        placeholder="Enter your password"
+                        required
+                    >
+
+                </div>
+
+
+                {% if messages %}
+
+                    <div class="login-messages">
+
+                        {% for message in messages %}
+
+                            <p>
+                                {{ message }}
+                            </p>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+
+                <button type="submit"
+                        class="login-btn">
+
+                    Login
+
+                </button>
+
+            </form>
+
+
+            <div class="login-signup">
+
+                <p>
+                    Don't have an account?
+
+                    <a href="{% url 'signup' %}">
+                        Create an account
+                    </a>
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

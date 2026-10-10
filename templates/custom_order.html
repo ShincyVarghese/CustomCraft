@@ -1,0 +1,110 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}
+Customize Your Gift | CustomCraft
+{% endblock %}
+
+{% block content %}
+
+<section class="section-pad">
+
+    <div class="container">
+
+        <div class="section-head">
+
+            <span class="eyebrow">
+                Make It Personal
+            </span>
+
+            <h1>
+                Customize Your Gift
+            </h1>
+
+            <p>
+                Create a special gift by adding your own
+                name, photo and personal message.
+            </p>
+
+        </div>
+
+
+        <div class="feature-grid">
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    <i class="fa-solid fa-mug-hot"></i>
+                </div>
+
+                <h3>
+                    Personalized Mug
+                </h3>
+
+                <p>
+                    Add a name, photo and special message
+                    to create your own customized mug.
+                </p>
+
+                <br>
+
+                <a href="{% url 'shop' %}" class="btn btn-primary">
+                    Customize Mug
+                </a>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    <i class="fa-solid fa-image"></i>
+                </div>
+
+                <h3>
+                    Photo Frame
+                </h3>
+
+                <p>
+                    Turn your favorite memory into
+                    a beautiful personalized frame.
+                </p>
+
+                <br>
+
+                <a href="{% url 'shop' %}" class="btn btn-primary">
+                    Customize Frame
+                </a>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    <i class="fa-solid fa-gift"></i>
+                </div>
+
+                <h3>
+                    Gift Hamper
+                </h3>
+
+                <p>
+                    Choose your favorite products and
+                    create a thoughtful gift hamper.
+                </p>
+
+                <br>
+
+                <a href="{% url 'shop' %}" class="btn btn-primary">
+                    Create Hamper
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
