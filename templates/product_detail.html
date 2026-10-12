@@ -4,6 +4,10 @@
 
 {% block content %}
 
+<!-- ==============================
+     PRODUCT DETAILS
+============================== -->
+
 <section class="product-detail-section">
 
     <div class="product-detail-container">
@@ -37,6 +41,19 @@
                 {{ product.description }}
             </p>
 
+            <!-- Average Rating Summary -->
+            <div class="product-rating-summary">
+                {% if review_count %}
+                    <span class="rating-stars">★</span>
+                    <strong>{{ average_rating|floatformat:1 }}/5</strong>
+                    <span>
+                        ({{ review_count }} review{{ review_count|pluralize }})
+                    </span>
+                {% else %}
+                    <span>No ratings yet</span>
+                {% endif %}
+            </div>
+
             <!-- Stock Status -->
             {% if product.stock > 0 %}
                 <p class="stock-available">
@@ -58,7 +75,7 @@
             {% if product.stock > 0 %}
 
                 <!-- Quantity Form -->
-                <form
+            <form
                     method="post"
                     action="{% url 'add_to_cart' product.id %}"
                     id="add-cart-form"
@@ -79,19 +96,22 @@
                         max="{{ product.stock }}"
                         required
                     >
-
-                </form>
+            </form>
 
                 <!-- Action Buttons -->
                 <div class="product-action-buttons">
 
                     <!-- Wishlist -->
-                    <button
-                        type="button"
-                        class="wishlist-btn"
-                        onclick="alert('Wishlist feature will be added soon!')">
-                        ♡ Add to Wishlist
-                    </button>
+                    <form
+                        method="POST"
+                        action="{% url 'add_to_wishlist' product.id %}">
+
+                        {% csrf_token %}
+
+                        <button type="submit" class="wishlist-btn">
+                            ♡ Add to Wishlist
+                        </button>
+                    </form>
 
                     <!-- Customize Product -->
                     <a
@@ -113,15 +133,11 @@
             {% endif %}
 
             <!-- Additional Information -->
-            <div class="product-extra-info">
-
-                <p>✓ Carefully prepared for you</p>
-
-                <p>🎁 Make your gift personal</p>
-
-                <p>♡ Made for special moments</p>
-
-            </div>
+        <div class="product-extra-info">
+            <p>✓ Carefully prepared for you</p>
+            <p>🎁 Make your gift personal</p>
+            <p>♡ Made for special moments</p>
+        </div>
 
         </div>
 
@@ -129,4 +145,91 @@
 
 </section>
 
+
+<!-- ==============================
+     CUSTOMER REVIEWS
+============================== -->
+
+<section class="product-reviews">
+
+    <h2>Customer Reviews</h2>
+
+    <!-- Rating Summary -->
+    <div class="review-summary">
+
+        {% if review_count %}
+            <p class="average-rating">
+                ★ {{ average_rating|floatformat:1 }} / 5
+            </p>
+
+            <p>
+                Based on {{ review_count }}
+                review{{ review_count|pluralize }}
+            </p>
+        {% else %}
+            <p>
+                No reviews yet. Be the first to review this gift!
+            </p>
+        {% endif %}
+
+    </div>
+
+    <!-- Write a Review -->
+    <a
+        href="{% url 'add_review' product.id %}"
+        class="write-review-btn">
+        ✍ Write a Review
+    </a>
+
+    <!-- Individual Reviews -->
+    <div class="customer-reviews-list">
+
+        {% for review in reviews %}
+
+            <article class="customer-review">
+
+                <div class="review-stars">
+                    {% for star in "12345" %}
+                        {% if forloop.counter <= review.rating %}
+                            ★
+                        {% else %}
+                            ☆
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <p class="review-comment">
+                    {{ review.comment }}
+                </p>
+
+                
+                <p class="review-meta">
+                     By {{ review.customer.username }}
+                  · {{ review.created_at|date:"d M Y" }}
+                </p>
+
+                   {% if user.is_authenticated and user.id == review.customer_id %}
+                <a
+                   href="{% url 'edit_review' review.id %}"
+                   class="edit-review-btn">
+                     ✏️ Edit My Review
+                </a>
+                {% endif %}
+
+
+             </article>
+
+            {% empty %}
+
+            <p class="no-reviews-message">
+                Customer reviews will appear here.
+            </p>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
 {% endblock %}
+

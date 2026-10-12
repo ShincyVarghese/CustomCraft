@@ -12,6 +12,8 @@ from cart.models import CartItem
 
 from cart.views import get_cart
 
+from django.db.models import Avg
+
 
 def signup(request):
 
@@ -50,7 +52,7 @@ def login_view(request):
 
         if user is not None:
             login(request,user)
-            return redirect('profile')
+            return redirect("home")
 
         else:
             return render(request, 'accounts/login.html', {'error':'Invalid username or password.'})
@@ -127,15 +129,27 @@ def shop(request):
         'shop.html',
         {'products': products}
     )
-def product_detail(request, product_id):
 
-    product = get_object_or_404(Product,id=product_id)
+def product_detail(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    reviews = product.reviews.select_related("customer").all()
+
+    average_rating = reviews.aggregate(
+        average=Avg("rating")
+    )["average"]
 
     return render(
         request,
-        'product_detail.html',
-        {'product': product}
+        "product_detail.html",
+        {
+            "product": product,
+            "reviews": reviews,
+            "average_rating": average_rating,
+            "review_count": reviews.count(),
+        }
     )
+
 
 
 def customize_product(request, product_id):

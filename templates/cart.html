@@ -17,114 +17,81 @@ Your Cart | CustomCraft
                 YOUR SHOPPING BAG
             </p>
 
-            <h1>
-                Your Cart
-            </h1>
+            <h1>Your Cart</h1>
 
             <p>
                 Review your personalized gifts before checkout.
             </p>
 
         </div>
+{% if cart_items %}
 
+    <div class="cart-layout">
 
-        {% if cart_items %}
+        <!-- CART ITEMS -->
+        <div class="cart-items">
 
-        <div class="cart-layout">
+            {% for item in cart_items %}
 
-            <!-- =========================
-                 CART ITEMS
-            ========================== -->
+            <div class="cart-item">
 
-            <div class="cart-items">
+                <!-- PRODUCT IMAGE -->
+                <div class="cart-item-image">
 
-                {% for item in cart_items %}
-
-                <div class="cart-item">
-
-                    <!-- PRODUCT IMAGE -->
-
-                    <div class="cart-item-image">
-
-                        {% if item.product.image %}
-
-                            <img
-                                src="{{ item.product.image.url }}"
-                                alt="{{ item.product.name }}"
-                            >
-
+                    {% if item.product.image %}
+                        <img
+                            src="{{ item.product.image.url }}"
+                            alt="{{ item.product.name }}"
+                        >
                         {% else %}
-
-                            <span>
-                                No Image
-                            </span>
-
+                            <span>No Image</span>
                         {% endif %}
 
-                    </div>
+                </div>
 
+                <!-- PRODUCT DETAILS -->
+                <div class="cart-item-details">
 
-                    <!-- PRODUCT DETAILS -->
+                    <p class="cart-category">
+                        {{ item.product.category.name }}
+                    </p>
 
-                    <div class="cart-item-details">
+                    <h2>{{ item.product.name }}</h2>
 
-                        <p class="cart-category">
-                            {{ item.product.category.name }}
+                    <p class="cart-price">
+                        ₹{{ item.product.price }}
+                    </p>
+
+                    <!-- CUSTOMIZATION DETAILS -->
+                    {% if item.customization %}
+
+                    <div class="customization-details">
+
+                        <h3>Your Personalization</h3>
+
+                        {% if item.customization.color %}
+                        <p>
+                            <strong>Color:</strong>
+                            {{ item.customization.color }}
                         </p>
+                        {% endif %}
 
-                        <h2>
-                            {{ item.product.name }}
-                        </h2>
-
-                        <p class="cart-price">
-                            ₹{{ item.product.price }}
+                        {% if item.customization.name_to_print %}
+                        <p>
+                            <strong>Name:</strong>
+                            {{ item.customization.name_to_print }}
                         </p>
-
-
-                        <!-- CUSTOMIZATION DETAILS -->
-
-                        {% if item.customization %}
-
-                        <div class="customization-details">
-
-                            <h3>
-                                Your Personalization
-                            </h3>
-
-
-                            {% if item.customization.color %}
-
-                            <p>
-                                <strong>Color:</strong>
-                                {{ item.customization.color }}
-                            </p>
-
-                            {% endif %}
-
-
-                            {% if item.customization.name_to_print %}
-
-                            <p>
-                                <strong>Name:</strong>
-                                {{ item.customization.name_to_print }}
-                            </p>
-
-                            {% endif %}
-
+                        {% endif %}
 
                             {% if item.customization.message %}
-
-                            <p>
-                                <strong>Message:</strong>
+                        <p>
+                            <strong>Message:</strong>
                                 {{ item.customization.message }}
-                            </p>
+                        </p>
+                        {% endif %}
 
-                            {% endif %}
-
-
-                            {% if item.customization.photo %}
-
-                            <div class="customization-photo">
+                        {% if item.customization.photo %}
+                        <div class="customization-photo">
 
                                 <p>
                                     <strong>Uploaded Photo:</strong>
@@ -135,78 +102,77 @@ Your Cart | CustomCraft
                                     alt="Customized photo"
                                 >
 
-                            </div>
-
-                            {% endif %}
-
-                        </div>
-
+                    </div>
                         {% endif %}
-
-
-                        <!-- QUANTITY -->
-
-                        <p class="cart-quantity">
-
-                            <strong>
-                                Quantity:
-                            </strong>
-
-                            {{ item.quantity }}
-
-                        </p>
-                        <div class="cart-actions">
-
-                        <form
-                           method="POST"
-                           action="{% url 'update_cart' item.id %}"
-                        >
-
-                          {% csrf_token %}
-
-                        <div class="quantity-control">
-
-                            <label for="quantity-{{ item.id }}">
-                              Quantity
-                            </label>
-
-                            <input
-                              type="number"
-                               id="quantity-{{ item.id }}"
-                               name="quantity"
-                               value="{{ item.quantity }}"
-                               min="1"
-                            >
-
-                           <button type="submit">
-                             Update
-                           </button>
-
-                        </div>
-
-                        </form>
-
-
-                            <a
-                                href="{% url 'remove_from_cart' item.id %}"
-                                class="remove-cart-item"
-                            >
-                             Remove
-                            </a>
 
                     </div>
 
+                    {% endif %}
+
+                    <!-- QUANTITY -->
+                    <p class="cart-quantity">
+                        <strong>Quantity:</strong>
+                        {{ item.quantity }}
+                    </p>
+
+                        <!-- UPDATE AND REMOVE -->
+                        <div class="cart-actions">
+
+                            <form
+                                method="POST"
+                                action="{% url 'update_cart' item.id %}"
+                            >
+                                {% csrf_token %}
+
+                                <div class="quantity-control">
+
+                                    <label for="quantity-{{ item.id }}">
+                                        Quantity
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        id="quantity-{{ item.id }}"
+                                        name="quantity"
+                                        value="{{ item.quantity }}"
+                                        min="1"
+                                        max="{{ item.product.stock }}"
+                                        required
+                                    >
+
+                                    <button type="submit">
+                                        Update
+                                    </button>
+
+                                </div>
+
+                            </form>
+
+                            <form
+                                method="POST"
+                                action="{% url 'remove_from_cart' item.id %}"
+                            >
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="remove-cart-item"
+                                >
+                                    Remove
+                                </button>
+
+                            </form>
+
+                        </div>
+
                         <!-- ITEM TOTAL -->
+                    <p class="cart-item-total">
 
-                        <p class="cart-item-total">
+                        <strong>Item Total:</strong>
 
-                            <strong>
-                                Item Total:
-                            </strong>
+                        ₹{% widthratio item.product.price 1 item.quantity %}
 
-                            ₹{% widthratio item.product.price 1 item.quantity %}
-
-                        </p>
+                    </p>
 
                     </div>
 
@@ -216,100 +182,65 @@ Your Cart | CustomCraft
 
             </div>
 
-
-            <!-- =========================
-                 ORDER SUMMARY
-            ========================== -->
-
+            <!-- ORDER SUMMARY -->
             <div class="cart-summary">
 
-                <h2>
-                    Order Summary
-                </h2>
+                <h2>Order Summary</h2>
 
+            <div class="summary-row">
+                <span>Items</span>
+                <span>{{ cart_items|length }}</span>
+            </div>
 
-                <div class="summary-row">
-
-                    <span>
-                        Items
-                    </span>
-
-                    <span>
-                        {{ cart_items|length }}
-                    </span>
-
-                </div>
-
-
-                <div class="summary-line"></div>
-
+            <div class="summary-line"></div>
 
                 <div class="summary-total">
-
-                    <span>
-                        Total
-                    </span>
-
-                    <strong>
-                        ₹{{ total }}
-                    </strong>
-
+                    <span>Total</span>
+                    <strong>₹{{ total }}</strong>
                 </div>
 
-
-                <button class="checkout-btn">
-
-                    Proceed to Checkout
-
-                </button>
-
-
+                <!-- FIXED CHECKOUT LINK -->
                 <a
-                    href="{% url 'shop' %}"
-                    class="continue-shopping-btn"
+                    href="{% url 'checkout' %}"
+                    class="checkout-btn"
                 >
-
-                    Continue Shopping
-
+                    Proceed to Checkout
                 </a>
+
+            <a
+                 href="{% url 'shop' %}"
+                class="continue-shopping-btn"
+            >
+                Continue Shopping
+            </a>
 
             </div>
 
-        </div>
-
+    </div>
 
         {% else %}
 
-
-        <!-- =========================
-             EMPTY CART
-        ========================== -->
-
+        <!-- EMPTY CART -->
         <div class="empty-cart">
 
             <div class="empty-cart-icon">
                 🛍️
             </div>
 
-            <h2>
-                Your cart is empty
-            </h2>
+            <h2>Your cart is empty</h2>
 
             <p>
                 Looks like you haven't added any gifts yet.
             </p>
 
-            <a
-                href="{% url 'shop' %}"
-                class="continue-shopping-btn"
-            >
+        <a
+            href="{% url 'shop' %}"
+            class="continue-shopping-btn"
+        >
+            Continue Shopping
+        </a>
 
-                Continue Shopping
-
-            </a>
-
-        </div>
-
+    </div>
 
         {% endif %}
 

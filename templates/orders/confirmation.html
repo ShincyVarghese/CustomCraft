@@ -1,0 +1,36 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="checkout-container">
+    <section class="checkout-card">
+        <h1>Thank You for Your Order!</h1>
+
+        <p>Your CustomCraft order has been placed successfully.</p>
+
+        <h2>Order #{{ order.id }}</h2>
+        <p><strong>Status:</strong> {{ order.get_status_display }}</p>
+        <p><strong>Payment:</strong> {{ order.get_payment_method_display }}</p>
+        <p><strong>Delivery to:</strong> {{ order.full_name }}</p>
+        <p>
+            {{ order.address }},
+            {{ order.city }},
+            {{ order.state }} - {{ order.pincode }}
+        </p>
+
+        <h3>Items</h3>
+        {% for item in order.items.all %}
+            <p>
+                {{ item.product_name }} × {{ item.quantity }}
+                — ₹{{ item.subtotal|floatformat:2 }}
+            </p>
+        {% endfor %}
+
+        <h3>Total: ₹{{ order.total_amount|floatformat:2 }}</h3>
+
+        <a href="{% url 'shop' %}" class="checkout-button">
+            Continue Shopping
+        </a>
+    </section>
+</div>
+{% endblock %}

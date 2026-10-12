@@ -1,0 +1,58 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<section class="review-form-section">
+    <div class="review-form-card">
+        <h2>
+            {% if editing %}
+                 Edit Your Review
+            {% else %}
+                Review Your Gift
+            {% endif %}
+        </h2>
+        <p>Share your experience with {{ product.name }}.</p>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="review-field">
+                <label for="{{ form.rating.id_for_label }}">
+                    Your Rating
+                </label>
+                {{ form.rating }}
+                {{ form.rating.errors }}
+            </div>
+
+            
+            <div class="review-field">
+                <label>Your Rating</label>
+
+            <div class="rating-options">
+                  {% for radio in form.rating %}
+                <label class="rating-option">
+                    {{ radio.tag }}
+                   <span>{{ radio.choice_label }}</span>
+                </label>
+                {% endfor %}
+            </div>
+
+            {{ form.rating.errors }}
+        </div>
+
+
+            <button type="submit" class="review-submit-btn">
+                {% if editing %}
+                     Update Review
+                {% else %}
+                    Submit Review
+                {% endif %}
+            </button>
+        </form>
+
+        <a href="{% url 'product_detail' product.id %}">
+            Back to Product
+        </a>
+    </div>
+</section>
+{% endblock %}

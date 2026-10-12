@@ -1,0 +1,156 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="checkout-container">
+
+    <h1>My Orders</h1>
+    <p>Track your personalized gifts and previous purchases.</p>
+
+    {% for order in orders %}
+        <div class="checkout-card order-card">
+
+            <!-- Order Header -->
+            <div class="checkout-item order-header">
+                <div>
+                    <h3>Order #{{ order.id }}</h3>
+                    <p>
+                        Placed on {{ order.created_at|date:"d M Y" }}
+                    </p>
+                </div>
+
+                <div class="order-total">
+                    <span class="order-status {{ order.status }}">
+                        {{ order.get_status_display }}
+                    </span>
+                    <h3>₹{{ order.total_amount|floatformat:2 }}</h3>
+                </div>
+            </div>
+
+            <!-- Order Items -->
+            <div class="order-items">
+                <h4>Order Items</h4>
+
+                {% for item in order.items.all %}
+                    <div class="checkout-item">
+                        <span>
+                            {{ item.product_name }} × {{ item.quantity }}
+                        </span>
+                        <span>
+                            ₹{{ item.subtotal|floatformat:2 }}
+                        </span>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Order Tracking -->
+            <div class="order-tracking">
+                <h4>Order Tracking</h4>
+
+                <div class="tracking-steps">
+
+                    <div class="tracking-step
+                        {% if order.status != 'cancelled' %}completed{% endif %}">
+                        <div class="tracking-icon">✓</div>
+                        <span>Order Placed</span>
+                    </div>
+
+                    <div class="tracking-line
+                        {% if order.status == 'confirmed' or order.status == 'shipped' or order.status == 'delivered' %}completed{% endif %}">
+                    </div>
+
+                    <div class="tracking-step
+                        {% if order.status == 'confirmed' or order.status == 'shipped' or order.status == 'delivered' %}completed{% endif %}">
+                        <div class="tracking-icon">✓</div>
+                        <span>Confirmed</span>
+                    </div>
+
+                    <div class="tracking-line
+                        {% if order.status == 'shipped' or order.status == 'delivered' %}completed{% endif %}">
+                    </div>
+
+                    <div class="tracking-step
+                        {% if order.status == 'shipped' or order.status == 'delivered' %}completed{% endif %}">
+                        <div class="tracking-icon">🚚</div>
+                        <span>Shipped</span>
+                    </div>
+
+                    <div class="tracking-line
+                        {% if order.status == 'delivered' %}completed{% endif %}">
+                    </div>
+
+                    <div class="tracking-step
+                        {% if order.status == 'delivered' %}completed{% endif %}">
+                        <div class="tracking-icon">🎁</div>
+                        <span>Delivered</span>
+                    </div>
+
+                </div>
+
+                {% if order.status == 'pending' %}
+                    <p class="tracking-message">
+                        ⏳ Your order is waiting for confirmation.
+                    </p>
+
+                {% elif order.status == 'confirmed' %}
+                    <p class="tracking-message">
+                        ✅ Your order has been confirmed and is being prepared.
+                    </p>
+
+                {% elif order.status == 'shipped' %}
+                    <p class="tracking-message">
+                        🚚 Your gift is on its way!
+                    </p>
+
+                {% elif order.status == 'delivered' %}
+                    <p class="tracking-message">
+                        🎁 Your gift has been delivered. Enjoy your special moment!
+                    </p>
+
+                {% elif order.status == 'cancelled' %}
+                    <p class="tracking-message cancelled-message">
+                        ❌ This order has been cancelled.
+                    </p>
+                {% endif %}
+            </div>
+
+            <!-- View Order Details -->
+            <a
+                href="{% url 'order_success' order.id %}"
+                class="checkout-button"
+            >
+                View Order Details
+            </a>
+        
+        {% if order.status == "pending" or order.status == "confirmed" %}
+           <form
+              method="post"
+              action="{% url 'cancel_order' order.id %}"
+              class="cancel-order-form"
+              onsubmit="return confirm('Are you sure you want to cancel this order?');"
+            >
+              {% csrf_token %}
+              <button type="submit" class="cancel-order-button">
+                 Cancel Order
+              </button>
+           </form>
+       {% endif %}
+
+
+
+        </div>
+
+    {% empty %}
+        <div class="checkout-card">
+            <h2>No orders yet</h2>
+            <p>
+                Your personalized gifts will appear here after you place an order.
+            </p>
+            <a href="{% url 'shop' %}" class="checkout-button">
+                Explore Gifts
+            </a>
+        </div>
+    {% endfor %}
+
+</div>
+{% endblock %}

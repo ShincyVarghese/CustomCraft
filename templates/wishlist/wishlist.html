@@ -1,0 +1,82 @@
+
+{% extends 'base.html' %}
+
+{% block title %}My Wishlist | CustomCraft{% endblock %}
+
+{% block content %}
+<section class="wishlist-section">
+    <div class="wishlist-container">
+
+        <div class="wishlist-header">
+            <p class="wishlist-eyebrow">YOUR FAVOURITES</p>
+            <h1>My Wishlist <span>♡</span></h1>
+            <p>Save the gifts you love and find them whenever you need.</p>
+        </div>
+
+        {% if items %}
+        <div class="wishlist-grid">
+            {% for item in items %}
+            <article class="wishlist-card">
+
+                <div class="wishlist-image">
+                    {% if item.product.image %}
+                    <img
+                        src="{{ item.product.image.url }}"
+                        alt="{{ item.product.name }}"
+                    >
+                    {% else %}
+                    <div class="wishlist-no-image">🎁</div>
+                    {% endif %}
+                </div>
+
+                <div class="wishlist-card-body">
+                    <p class="wishlist-category">
+                        {{ item.product.category.name }}
+                    </p>
+
+                    <h2>{{ item.product.name }}</h2>
+
+                    <p class="wishlist-price">
+                        ₹{{ item.product.price }}
+                    </p>
+
+                    <form
+                        method="POST"
+                        action="{% url 'add_to_cart' item.product.id %}"
+                    >
+                        {% csrf_token %}
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="wishlist-cart-btn">
+                            Add to Cart
+                        </button>
+                    </form>
+
+                    <form
+                        method="POST"
+                        action="{% url 'remove_from_wishlist' item.id %}"
+                    >
+                        {% csrf_token %}
+                        <button type="submit" class="wishlist-remove-btn">
+                            Remove ♡
+                        </button>
+                    </form>
+                </div>
+
+            </article>
+            {% endfor %}
+        </div>
+
+        {% else %}
+        <div class="wishlist-empty">
+            <div class="wishlist-empty-icon">♡</div>
+            <h2>Your wishlist is waiting!</h2>
+            <p>Explore CustomCraft and save the gifts you love.</p>
+            <a href="{% url 'shop' %}" class="wishlist-shop-btn">
+                Explore Gifts
+            </a>
+        </div>
+        {% endif %}
+
+    </div>
+</section>
+{% endblock %}

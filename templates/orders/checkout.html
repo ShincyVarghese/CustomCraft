@@ -1,0 +1,84 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="checkout-container">
+    <h1>Checkout</h1>
+    <p>Complete your delivery details to place your order.</p>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p class="checkout-message">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <div class="checkout-layout">
+        <section class="checkout-card">
+            <h2>Delivery Details</h2>
+
+            <form method="POST" action="{% url 'checkout' %}">
+                {% csrf_token %}
+
+                <label for="full_name">Full Name</label>
+                <input id="full_name" type="text" name="full_name"
+                       maxlength="150" required>
+
+                <label for="phone">Phone Number</label>
+                <input id="phone" type="tel" name="phone"
+                       maxlength="15" required>
+
+                <label for="address">Delivery Address</label>
+                <textarea id="address" name="address"
+                          rows="3" required></textarea>
+
+                <label for="city">City</label>
+                <input id="city" type="text" name="city"
+                       maxlength="100" required>
+
+                <label for="state">State</label>
+                <input id="state" type="text" name="state"
+                       maxlength="100" required>
+
+                <label for="pincode">PIN Code</label>
+                <input id="pincode" type="text" name="pincode"
+                       inputmode="numeric" maxlength="6"
+                       pattern="[0-9]{6}" required>
+
+                <h3>Payment Method</h3>
+                <p>Cash on Delivery (COD)</p>
+
+                <button type="submit" class="checkout-button">
+                    Place Order
+                </button>
+            </form>
+        </section>
+
+        <section class="checkout-card">
+            <h2>Order Summary</h2>
+
+            {% for item in cart_items %}
+                <div class="checkout-item">
+                    <div>
+                        <strong>{{ item.product.name }}</strong>
+                        <p>Quantity: {{ item.quantity }}</p>
+
+                        {% if item.customization %}
+                            <p>Personalized item</p>
+                        {% endif %}
+                    </div>
+
+                    <span>
+                        ₹{{ item.product.price|floatformat:2 }}
+                        × {{ item.quantity }}
+                    </span>
+                </div>
+            {% endfor %}
+
+            <div class="checkout-total">
+                <strong>Total</strong>
+                <strong>₹{{ total|floatformat:2 }}</strong>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}
