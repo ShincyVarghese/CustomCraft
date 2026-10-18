@@ -92,4 +92,43 @@ class OrderItem(models.Model):
         return self.price * self.quantity
 
 
+class OrderHamper(models.Model):
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name="hampers"
+    )
+    gift_message = models.CharField(
+        max_length=250,
+        blank=True
+    )
+
+    def __str__(self):
+        return f"Hamper for Order #{self.order_id}"
+
+
+class OrderHamperItem(models.Model):
+    hamper = models.ForeignKey(
+        OrderHamper,
+        on_delete=models.CASCADE,
+        related_name="items"
+    )
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.PROTECT
+    )
+    product_name = models.CharField(max_length=200)
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+    quantity = models.PositiveIntegerField(default=1)
+
+    @property
+    def subtotal(self):
+        return self.price * self.quantity
+
+    def __str__(self):
+        return f"{self.product_name} x {self.quantity}"
+
 

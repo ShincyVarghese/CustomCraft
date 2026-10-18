@@ -39,29 +39,51 @@
 
             <div class="navbar-links">
                 <a href="{% url 'home' %}">Home</a>
-                <a href="#">About Us</a>
-                <a href="#">Build a Gift Box</a>
-                <a href="{% url 'shop' %}">Shop by Category</a>
-                <a href="#">Contact Us</a>
+                <a href="{% url 'home' %}#why-customcraft">About Us</a>
+                <a href="{% url 'customize_hamper' %}">Build a Gift Box</a>
+                <a href="/shop/" style="position: relative; z-index: 9999;">Shop by Category</a>
+                <a href="{% url 'home' %}#contact">Contact Us</a>
             </div>
 
             <div class="navbar-icons">
                 <a href="{% url 'shop' %}" class="nav-icon" aria-label="Search">
                     <span class="search-icon"></span>
                 </a>
-
+            {% if user.is_authenticated %}
                 <a href="{% url 'profile' %}" class="nav-icon" aria-label="Profile">
                     <span class="user-icon"></span>
+                </a>
+            {% else %}
+
+                <a href="{% url 'login' %}" class="nav-icon" aria-label="Login">
+                    <span class="user-icon"></span>
+                </a>
+            {% endif %}
+
+                <a href="{% url 'wishlist' %}" class="nav-icon cart-icon" aria-label="Wishlist">
+                    <span class="wishlist-icon">♡</span>
                 </a>
 
                 <a href="{% url 'cart' %}" class="nav-icon cart-icon" aria-label="Shopping cart">
                     <span class="bag-icon"></span>
-                    <span class="cart-count">0</span>
+                    <span class="cart-count">{{ cart_item_count }}</span>
                 </a>
             </div>
 
         </nav>
     </header>
+
+
+
+{% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
 
     <!-- MAIN CONTENT -->
     <main>
@@ -70,7 +92,7 @@
     </main>
 
     <!-- FOOTER -->
-    <footer class="footer">
+    <footer class="footer" id="contact">
 
         <div class="footer-container">
 

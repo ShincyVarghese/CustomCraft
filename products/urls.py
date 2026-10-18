@@ -1,18 +1,12 @@
 from django.urls import path
-from .views import shop, custom_order
+from . import views
 
 
 urlpatterns = [
 
-    path(
-        '',
-        shop,
-        name='shop'
-    ),
-    path(
-        'customize/',
-        custom_order,
-        name='custom_order'
-    ),
+    path('',views.shop,name='shop'),
+    path('customize/',views.custom_order,name='custom_order'),
+    path('customize-hamper/',views.customize_hamper, name="customize_hamper"),
+    path('save-hamper/',views.save_hamper,name="save_hamper"),
 
 ]

@@ -33,14 +33,55 @@
 
                 {% for item in order.items.all %}
                     <div class="checkout-item">
-                        <span>
-                            {{ item.product_name }} × {{ item.quantity }}
-                        </span>
-                        <span>
-                            ₹{{ item.subtotal|floatformat:2 }}
+                        <div>
+                            <strong>{{ item.product_name }}</strong>
+                            <p> Quantity: {{ item.quantity }}</p>
+
+                            {% if item.customization %}
+                                 {% if item.customization.name_to_print %}
+                                      <p> Name: {{ item.customization.name_to_print }}</p>
+                                {% endif %}
+
+                                {% if item.customization.message %}
+                                      <p>Gift Message: {{ item.customization.message}}</p>
+                                {% endif %}
+                            {% endif %}
+                    
+                        </div>
+
+                        <span>₹{{ item.subtotal|floatformat:2 }} 
+
                         </span>
                     </div>
+
+                {% empty %}
+                      <p>No regular products in this order.</p>
                 {% endfor %}
+
+                {% for hamper in order.hampers.all %}
+                   <div class="checkout-hamper">
+                      <h4>🎁 Custom Gift Box</h4>
+
+                      {% if hamper.gift_message %}
+                           <p>
+                              <strong>Gift Message:</strong>
+                              {{ hamper.gift_message }}
+                           </p>
+                      {% endif %}
+
+                      {% for item in hamper.items.all %}
+                           <div class="checkout-item">
+                               <span>
+                                    {{ item.product_name }} × {{ item.quantity }}
+                               </span>
+                               <span>
+                                  ₹{{ item.subtotal|floatformat:2 }}
+                               </span>
+                            </div>
+                       {% endfor %}
+                    </div>
+                {% endfor %}
+
             </div>
 
             <!-- Order Tracking -->

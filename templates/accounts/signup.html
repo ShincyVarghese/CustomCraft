@@ -1,201 +1,90 @@
 {% extends 'base.html' %}
 
-{% block title %}
-Sign Up | CustomCraft
-{% endblock %}
-
+{% block title %}Sign Up | CustomCraft{% endblock %}
 
 {% block content %}
 
-<section class="signup-section">
+    <section class="signup-section">
+        <div class="signup-container">
 
-    <div class="signup-container">
+            <!-- Left Side -->
+            <div class="signup-intro">
+                <span class="signup-label">CREATE YOUR ACCOUNT</span>
 
-        <!-- Left Side -->
+                <h1>Join CustomCraft</h1>
 
-        <div class="signup-intro">
+               <p>
+                Create an account and start discovering personalized
+                gifts made specially for your special moments.
+               </p>
 
-            <p class="signup-small-title">
-                CREATE YOUR ACCOUNT
-            </p>
-
-            <h1>
-                Join
-                <span>CustomCraft</span>
-            </h1>
-
-            <p class="signup-description">
-                Create an account and start discovering
-                personalized gifts made specially for
-                your special moments.
-            </p>
-
-
-            <div class="signup-points">
-
-                <div class="signup-point">
-                    <span>✓</span>
-                    <p>Discover personalized gifts</p>
+                <div class="signup-benefit">
+                   <span>✓</span>
+                   <p>Discover personalized gifts</p>
                 </div>
 
-                <div class="signup-point">
-                    <span>✓</span>
-                    <p>Save your favorite products</p>
+                <div class="signup-benefit">
+                   <span>✓</span>
+                   <p>Save your favorite products</p>
                 </div>
 
-                <div class="signup-point">
-                    <span>✓</span>
-                    <p>Track your orders easily</p>
+                <div class="signup-benefit">
+                   <span>✓</span>
+                   <p>Track your orders easily</p>
                 </div>
+             </div>
 
-            </div>
-
-        </div>
-
-
-        <!-- Signup Card -->
-
+        <!-- Right Side -->
         <div class="signup-card">
 
             <div class="signup-card-header">
-
-                <h2>
-                    Create Account
-                </h2>
-
-                <p>
-                    Fill in your details to get started.
-                </p>
-
+                <h2>Create Account</h2>
+                <p>Fill in your details to get started.</p>
             </div>
 
+            <form method="POST" class="{% url 'signup' %}" class="signup-form">
+                 {% csrf_token %}
 
-            <form method="POST">
+                  {% if form.non_field_errors %}
+                     <div class="signup-errors">
+                         {{ form.non_field_errors }}
+                     </div>
+                  {% endif %}
 
-                {% csrf_token %}
+                {% for field in form %}
+                    <div class="signup-field">
 
+                        <label for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                        </label>
 
-                <!-- Username -->
+                        {{ field }}
 
-                <div class="form-group">
+                        {% if field.help_text %}
+                            <div class="signup-help">
+                                {{ field.help_text|safe }}
+                            </div>
+                        {% endif %}
 
-                    <label for="id_username">
-                        Username
-                    </label>
-
-                    {{ form.username }}
-
-                    {% if form.username.errors %}
-
-                        <div class="form-error">
-                            {{ form.username.errors }}
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-
-                <!-- Email -->
-
-                <div class="form-group">
-
-                    <label for="id_email">
-                        Email Address
-                    </label>
-
-                    {{ form.email }}
-
-                    {% if form.email.errors %}
-
-                        <div class="form-error">
-                            {{ form.email.errors }}
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-
-                <!-- Password -->
-
-                <div class="form-group">
-
-                    <label for="id_password1">
-                        Password
-                    </label>
-
-                    {{ form.password1 }}
-
-                    {% if form.password1.errors %}
-
-                        <div class="form-error">
-                            {{ form.password1.errors }}
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-
-                <!-- Confirm Password -->
-
-                <div class="form-group">
-
-                    <label for="id_password2">
-                        Confirm Password
-                    </label>
-
-                    {{ form.password2 }}
-
-                    {% if form.password2.errors %}
-
-                        <div class="form-error">
-                            {{ form.password2.errors }}
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-
-                {% if form.non_field_errors %}
-
-                    <div class="form-error">
-
-                        {{ form.non_field_errors }}
+                        {% for error in field.errors %}
+                            <p class="signup-error">{{ error }}</p>
+                        {% endfor %}
 
                     </div>
+                {% endfor %}
 
-                {% endif %}
-
-
-                <button type="submit"
-                        class="signup-submit-btn">
-
+                <button type="submit" class="signup-button">
                     Create Account
+                 </button>
+             </form>
 
-                </button>
+            <p class="signup-login">
+                Already have an account?
+                <a href="{% url 'login' %}">Login</a>
+            </p>
 
-            </form>
-
-
-            <div class="signup-login">
-
-                <p>
-                    Already have an account?
-
-                    <a href="{% url 'login' %}">
-                        Login
-                    </a>
-                </p>
-
-            </div>
-
+          </div>
         </div>
-
-    </div>
-
-</section>
+    </section>
 
 {% endblock %}

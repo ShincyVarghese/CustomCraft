@@ -40,8 +40,12 @@ def add_review(request, product_id):
     return render(
         request,
         "reviews/add_review.html",
-        {"form": form, "product": product},
-    )
+        {
+            "form": form,
+            "product": product,
+            "editing": False,
+    },
+)
 
 
 @login_required

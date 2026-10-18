@@ -1,35 +1,66 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Profile | CustomCraft</title>
-</head>
+{% extends 'base.html' %}
 
-<body>
+{% block title %}My Profile | CustomCraft{% endblock %}
 
-    <h1>My Profile</h1>
+{% block content %}
 
-    <p>
-        <strong>Username:</strong>
-        {{ user.username }}
-    </p>
+<section class="profile-section">
+    <div class="profile-container">
 
-    <p>
-        <strong>Email:</strong>
-        {{ user.email }}
-    </p>
+        <div class="profile-header">
+            <h1>My Profile</h1>
+            <p>Manage your CustomCraft account details.</p>
+        </div>
 
-    <p>
-    <a href="{% url 'profile_edit' %}">
-        Edit Profile
-    </a>
-        
-    </p>
+        <div class="profile-card">
 
-    <p>
-        <a href="{% url 'logout' %}">
-            Logout
-        </a>
-    </p>
+            <div class="profile-avatar">
+                {{ user.username|first|upper }}
+            </div>
 
-</body>
-</html>
+            <h2>{{ user.username }}</h2>
+            <p class="profile-subtitle">CustomCraft Customer</p>
+
+            <div class="profile-details">
+
+                <div class="profile-detail-row">
+                    <span>Username</span>
+                    <strong>{{ user.username }}</strong>
+                </div>
+
+                <div class="profile-detail-row">
+                    <span>Email Address</span>
+                    <strong>{{ user.email|default:"Not added" }}</strong>
+                </div>
+
+            </div>
+
+            <div class="profile-actions">
+                <a href="{% url 'profile_edit' %}"
+                   class="profile-edit-button">
+                    Edit Profile
+                </a>
+
+                <a href="{% url 'my_orders' %}"
+                   class="profile-secondary-button">
+                    My Orders
+                </a>
+
+                <a href="{% url 'wishlist' %}"
+                   class="profile-secondary-button">
+                    My Wishlist
+                </a>
+            </div>
+
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="profile-logout">
+                    Logout
+                </button>
+            </form>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

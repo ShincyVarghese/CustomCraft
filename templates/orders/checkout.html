@@ -13,46 +13,76 @@
     {% endif %}
 
     <div class="checkout-layout">
+
+        <!-- DELIVERY DETAILS -->
         <section class="checkout-card">
             <h2>Delivery Details</h2>
 
             <form method="POST" action="{% url 'checkout' %}">
                 {% csrf_token %}
+                {% for field in form %}
+                    {% for error in field.errors %}
+
+                         <p style="color: red;">
+                            {{ field.label }}: {{ error }}
+                         </p>
+
+                    {% endfor %}
+                {% endfor %}
+
+                {% for error in form.non_field_errors %}
+                     <p style="color: red;">{{ error }}</p>
+
+                {% endfor %}
+              
+
+
 
                 <label for="full_name">Full Name</label>
-                <input id="full_name" type="text" name="full_name"
-                       maxlength="150" required>
+                <input id="full_name" type="text"
+                       name="full_name" maxlength="150" required>
 
                 <label for="phone">Phone Number</label>
-                <input id="phone" type="tel" name="phone"
-                       maxlength="15" required>
+                <input id="phone" type="tel"
+                       name="phone" maxlength="15" required>
 
                 <label for="address">Delivery Address</label>
                 <textarea id="address" name="address"
                           rows="3" required></textarea>
 
                 <label for="city">City</label>
-                <input id="city" type="text" name="city"
-                       maxlength="100" required>
+                <input id="city" type="text"
+                       name="city" maxlength="100" required>
 
                 <label for="state">State</label>
-                <input id="state" type="text" name="state"
-                       maxlength="100" required>
+                <input id="state" type="text"
+                       name="state" maxlength="100" required>
 
                 <label for="pincode">PIN Code</label>
-                <input id="pincode" type="text" name="pincode"
-                       inputmode="numeric" maxlength="6"
-                       pattern="[0-9]{6}" required>
+                <input id="pincode" type="text"
+                       name="pincode" inputmode="numeric"
+                       maxlength="6" pattern="[0-9]{6}" required>
 
                 <h3>Payment Method</h3>
-                <p>Cash on Delivery (COD)</p>
 
+                <label>
+                    <input
+                        type="radio"
+                        name="payment_method"
+                        value="cod"
+                        checked
+                        required
+                    >
+                    Cash on Delivery (COD)
+
+                </label>
                 <button type="submit" class="checkout-button">
                     Place Order
                 </button>
             </form>
         </section>
 
+        <!-- ORDER SUMMARY -->
         <section class="checkout-card">
             <h2>Order Summary</h2>
 
@@ -64,6 +94,12 @@
 
                         {% if item.customization %}
                             <p>Personalized item</p>
+                            {% if item.customization.name_to_print %}
+                                <p>Name: {{ item.customization.name_to_print }}</p>
+                            {% endif %}
+                            {% if item.customization.message %}
+                                <p>Message: {{ item.customization.message }}</p>
+                            {% endif %}
                         {% endif %}
                     </div>
 
@@ -72,13 +108,58 @@
                         × {{ item.quantity }}
                     </span>
                 </div>
+            {% empty %}
+                <p>No regular products in your cart.</p>
+            {% endfor %}
+
+            <!-- CUSTOM HAMPERS -->
+            {% for hamper in custom_hampers %}
+                <div class="checkout-hamper">
+                    <h3>🎁 Custom Gift Box {{ forloop.counter }}</h3>
+
+                    {% if hamper.gift_message %}
+                        <p>
+                            <strong>Gift message:</strong>
+                            {{ hamper.gift_message }}
+                        </p>
+                    {% endif %}
+
+                    {% for hamper_item in hamper.hamper_items.all %}
+                        <div class="checkout-item">
+                            <div>
+                                <strong>{{ hamper_item.product.name }}</strong>
+                                <p>Quantity: {{ hamper_item.quantity }}</p>
+                            </div>
+
+                            <span>
+                                ₹{{ hamper_item.subtotal|floatformat:2 }}
+                            </span>
+                        </div>
+                    {% endfor %}
+
+                    <p class="checkout-hamper-total">
+                        <strong>Gift Box Total:</strong>
+                        ₹{{ hamper.total_price|floatformat:2 }}
+                    </p>
+                </div>
             {% endfor %}
 
             <div class="checkout-total">
-                <strong>Total</strong>
+                <strong>Products Subtotal</strong>
+                <strong>₹{{ product_total|floatformat:2 }}</strong>
+            </div>
+
+            <div class="checkout-total">
+                <strong>Gift Boxes Subtotal</strong>
+                <strong>₹{{ hamper_total|floatformat:2 }}</strong>
+            </div>
+
+            <div class="checkout-total grand-total">
+                <strong>Grand Total</strong>
                 <strong>₹{{ total|floatformat:2 }}</strong>
             </div>
         </section>
+
     </div>
 </div>
 {% endblock %}

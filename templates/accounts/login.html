@@ -36,9 +36,17 @@ Login | CustomCraft
 
         <div class="login-card">
 
-            <form method="POST">
+            <form method="POST" action="{% url 'login' %}">
 
                 {% csrf_token %}
+
+                
+            {% if error %}
+                <div class="login-messages">
+                    <p>{{ error }}</p>
+                </div>
+            {% endif %}
+
 
                 <div class="form-group">
 

@@ -13,6 +13,7 @@ from cart.models import CartItem
 from cart.views import get_cart
 
 from django.db.models import Avg
+from django.views.decorators.http import require_POST
 
 
 def signup(request):
@@ -61,7 +62,7 @@ def login_view(request):
     return render(request, 'accounts/login.html')
 
 
-
+@require_POST
 def user_logout(request):
 
     logout(request)
@@ -103,12 +104,15 @@ def profile_edit(request):
         {'form': form}
     )
 
-
 def home(request):
-    trending_products = Product.objects.all().order_by('-id')
-
-    print("TOTAL PRODUCTS:", Product.objects.count())
-    print("TRENDING PRODUCTS:", trending_products.count())
+    trending_products = Product.objects.filter(
+        name__in=[
+            "Pressed Flower Frame",
+            "Beaded Phone Charm",
+            "Crochet Flower Bouquet",
+            "Self-Care Hamper",
+        ]
+    )
 
     return render(
         request,
@@ -150,8 +154,6 @@ def product_detail(request, product_id):
         }
     )
 
-
-
 def customize_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
 
@@ -166,13 +168,23 @@ def customize_product(request, product_id):
         except (TypeError, ValueError):
             quantity = 0
 
+        if product.stock <= 0:
+            return render(
+                request,
+                'customize_product.html',
+                {
+                    'product': product,
+                    'error': 'Sorry, this product is out of stock.'
+                }
+            )
+
         if quantity < 1 or quantity > product.stock:
             return render(
                 request,
                 'customize_product.html',
                 {
                     'product': product,
-                    'error': 'Please select a valid quantity.'
+                    'error': f'Please select a quantity between 1 and {product.stock}.'
                 }
             )
 

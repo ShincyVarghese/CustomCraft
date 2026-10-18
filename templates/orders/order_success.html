@@ -1,60 +1,149 @@
 
 {% extends 'base.html' %}
-{% load static %}
 
 {% block content %}
 <div class="checkout-container">
-    <div class="checkout-card" style="text-align: center; max-width: 700px; margin: 40px auto;">
+    <div class="checkout-card order-success-card">
+    {% if order.status == "cancelled" %}
+        <div class="success-icon">✕</div>
+    {% else %}
+        <div class="success-icon">✓</div>
+    {% endif %}
 
-        <h1 style="color: #278dbf;">Thank you for your order!</h1>
+        <h1>Order Details</h1>
+        <p>Thank you for shopping with CustomCraft!</p>
 
-        <p>Your CustomCraft order has been placed successfully.</p>
+        <div class="order-info-header">
+            <h2>Order #{{ order.id }}</h2>
 
-        <h2>Order #{{ order.id }}</h2>
+            <p>
+                <strong>Order Date:</strong>
+                {{ order.created_at|date:"d M Y, h:i A" }}
+            </p>
 
-        <p>
-            <strong>Order Date:</strong>
-            {{ order.created_at|date:"d M Y, h:i A" }}
-        </p>
+            <p class="order-status-row">
+                <strong>Order Status:</strong>
+                <span class="status-badge status-{{ order.status }}">
+                    {{ order.get_status_display }}
+                </span>
+            </p>
+        </div>
 
-        <p>
-            <strong>Order Status:</strong>
-            {{ order.get_status_display }}
-        </p>
+        {% if order.status == "cancelled" %}
+            <p class="cancelled-message">
+                This order has been cancelled.
+            </p>
+        {% else %}
+            <div class="order-tracking">
+                <h3>Track Your Order</h3>
+
+                <div class="tracking-steps">
+                    <div class="tracking-step {% if order.status == 'pending' or order.status == 'confirmed' or order.status == 'shipped' or order.status == 'delivered' %}active{% endif %}">
+                        <div class="tracking-dot"></div>
+                        <span>Pending</span>
+                    </div>
+
+                    <div class="tracking-step {% if order.status == 'confirmed' or order.status == 'shipped' or order.status == 'delivered' %}active{% endif %}">
+                        <div class="tracking-dot"></div>
+                        <span>Confirmed</span>
+                    </div>
+
+                    <div class="tracking-step {% if order.status == 'shipped' or order.status == 'delivered' %}active{% endif %}">
+                        <div class="tracking-dot"></div>
+                        <span>Shipped</span>
+                    </div>
+
+                    <div class="tracking-step {% if order.status == 'delivered' %}active{% endif %}">
+                        <div class="tracking-dot"></div>
+                        <span>Delivered</span>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
 
         <hr>
 
-        <h2>Order Details</h2>
+        <h2>Items Ordered</h2>
 
         {% for item in order.items.all %}
             <div class="checkout-item">
-                <span>
-                    {{ item.product_name }} × {{ item.quantity }}
-                </span>
+                <div>
+                    <strong>{{ item.product_name }}</strong>
+                    <p>Quantity: {{ item.quantity }}</p>
+
+                    {% if item.customization %}
+                        {% if item.customization.name_to_print %}
+                            <p>Name: {{ item.customization.name_to_print }}</p>
+                        {% endif %}
+
+                        {% if item.customization.message %}
+                            <p>Message: {{ item.customization.message }}</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+
                 <span>₹{{ item.subtotal|floatformat:2 }}</span>
+            </div>
+        {% empty %}
+            <p>No regular products in this order.</p>
+        {% endfor %}
+
+        {% for hamper in order.hampers.all %}
+            <div class="checkout-hamper">
+                <h3>🎁 Custom Gift Box {{ forloop.counter }}</h3>
+
+                {% if hamper.gift_message %}
+                    <p>
+                        <strong>Gift Message:</strong>
+                        {{ hamper.gift_message }}
+                    </p>
+                {% endif %}
+
+                {% for item in hamper.items.all %}
+                    <div class="checkout-item">
+                        <div>
+                            <strong>{{ item.product_name }}</strong>
+                            <p>Quantity: {{ item.quantity }}</p>
+                        </div>
+
+                        <span>₹{{ item.subtotal|floatformat:2 }}</span>
+                    </div>
+                {% endfor %}
             </div>
         {% endfor %}
 
-        <div class="checkout-total">
+        <div class="checkout-total grand-total">
             <strong>Total Amount</strong>
             <strong>₹{{ order.total_amount|floatformat:2 }}</strong>
         </div>
 
-        <p>Payment Method: Cash on Delivery</p>
+        <div class="order-info-section">
+            <h3>Payment Information</h3>
+            <p>
+                <strong>Payment Method:</strong>
+                {{ order.get_payment_method_display }}
+            </p>
+        </div>
 
-        <p>
-            Delivery Address:
-            {{ order.address }}, {{ order.city }},
-            {{ order.state }} - {{ order.pincode }}
-        </p>
+        <div class="order-info-section">
+            <h3>Delivery Address</h3>
+            <p>
+                <strong>{{ order.full_name }}</strong><br>
+                {{ order.address }}<br>
+                {{ order.city }}, {{ order.state }} - {{ order.pincode }}<br>
+                Phone: {{ order.phone }}
+            </p>
+        </div>
 
-        <a href="{% url 'my_orders' %}" class="checkout-button">
-            View My Orders
-        </a>
+        <div class="order-success-actions">
+            <a href="{% url 'my_orders' %}" class="checkout-button">
+                View My Orders
+            </a>
 
-        <a href="{% url 'shop' %}" class="checkout-button">
-            Continue Shopping
-        </a>
+            <a href="{% url 'shop' %}" class="checkout-button">
+                Continue Shopping
+            </a>
+        </div>
 
     </div>
 </div>

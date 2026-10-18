@@ -1,0 +1,241 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Build Your Gift Box | CustomCraft{% endblock %}
+
+{% block content %}
+
+<section class="hamper-builder">
+
+    <div class="hamper-heading">
+        <p class="hamper-subtitle">MADE JUST FOR YOU</p>
+        <h1>Build Your Own Gift Box</h1>
+        <p>Select your favourite gifts and create a special hamper.</p>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p class="alert alert-info">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST" action="{% url 'save_hamper' %}"
+          id="hamper-form">
+        {% csrf_token %}
+
+        <input type="hidden" name="items" id="hamper-items">
+
+        <div class="hamper-layout">
+
+            <div class="hamper-products">
+                <h2>Choose Your Gifts</h2>
+
+                <div class="hamper-items">
+
+                    {% for product in products %}
+                    <div class="hamper-item"
+                         data-id="{{ product.id }}"
+                         data-price="{{ product.price }}">
+
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}"
+                                 alt="{{ product.name }}"
+                                 class="hamper-product-image">
+                        {% else %}
+                            <div class="hamper-emoji">🎁</div>
+                        {% endif %}
+
+                        <h3>{{ product.name }}</h3>
+
+                        <p class="hamper-product-price">
+                            ₹{{ product.price }}
+                        </p>
+
+                        <p class="hamper-stock">
+                            Available: {{ product.stock }}
+                        </p>
+
+                       
+                <div class="hamper-product-card">
+                     <label>
+                         <input type="checkbox" class="hamper-check">
+                        Add to box
+                    </label>
+                </div>
+
+
+                        <div class="quantity-control">
+                            <button type="button" class="qty-minus"
+                                    aria-label="Decrease quantity">−</button>
+
+                            <input type="number" class="hamper-qty"
+                                   value="1" min="1"
+                                   max="{% if product.stock < 20 %}{{ product.stock }}{% else %}20{% endif %}"
+                                   disabled>
+
+                            <button type="button" class="qty-plus"
+                                    aria-label="Increase quantity">+</button>
+                        </div>
+
+                    </div>
+                    {% empty %}
+                    <p>No products are currently available.
+                       Please add products through the Django admin.</p>
+                    {% endfor %}
+
+                </div>
+            </div>
+
+            <aside class="hamper-summary">
+                <h2>Your Gift Box</h2>
+
+                <ul id="selected-items" class="selected-items">
+                    <li>No items selected yet.</li>
+                </ul>
+
+                <label for="gift-message">Gift Message</label>
+                <textarea id="gift-message" name="gift_message"
+                          maxlength="250"
+                          placeholder="Write a lovely message..."></textarea>
+
+                <div class="hamper-total">
+                    <span>Total</span>
+                    <strong id="hamper-total">₹0.00</strong>
+                </div>
+
+                <button type="submit" id="save-hamper"
+                        class="hamper-submit">
+                    Save Hamper to Cart
+                </button>
+
+                <button type="button" id="clear-hamper"
+                        class="clear-hamper">
+                    Clear Selection
+                </button>
+            </aside>
+
+        </div>
+    </form>
+
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const cards = document.querySelectorAll(".hamper-item");
+    const selectedList = document.getElementById("selected-items");
+    const totalElement = document.getElementById("hamper-total");
+    const hiddenItems = document.getElementById("hamper-items");
+    const form = document.getElementById("hamper-form");
+
+    function updateHamper() {
+        let total = 0;
+        const selected = [];
+
+        selectedList.innerHTML = "";
+
+        cards.forEach(function (card) {
+            const checkbox = card.querySelector(".hamper-check");
+            const quantityInput = card.querySelector(".hamper-qty");
+            const quantity = Number(quantityInput.value);
+            const price = Number(card.dataset.price);
+
+            quantityInput.disabled = !checkbox.checked;
+
+            if (checkbox.checked) {
+                const subtotal = price * quantity;
+                total += subtotal;
+
+                selected.push({
+                    id: Number(card.dataset.id),
+                    quantity: quantity
+                });
+
+                const li = document.createElement("li");
+                li.textContent =
+                    card.querySelector("h3").textContent +
+                    " × " + quantity +
+                    " — ₹" + subtotal.toFixed(2);
+
+                selectedList.appendChild(li);
+            }
+        });
+
+        if (selected.length === 0) {
+            const li = document.createElement("li");
+            li.textContent = "No items selected yet.";
+            selectedList.appendChild(li);
+        }
+
+        hiddenItems.value = JSON.stringify(selected);
+        totalElement.textContent =
+            "₹" + total.toLocaleString("en-IN", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+    }
+
+    cards.forEach(function (card) {
+        const checkbox = card.querySelector(".hamper-check");
+        const quantityInput = card.querySelector(".hamper-qty");
+
+        card.querySelector(".qty-minus").addEventListener(
+            "click", function () {
+                quantityInput.value = Math.max(
+                    1, Number(quantityInput.value) - 1
+                );
+                updateHamper();
+            }
+        );
+
+        card.querySelector(".qty-plus").addEventListener(
+            "click", function () {
+                const max = Number(quantityInput.max);
+                quantityInput.value = Math.min(
+                    max, Number(quantityInput.value) + 1
+                );
+                updateHamper();
+            }
+        );
+
+        checkbox.addEventListener("change", updateHamper);
+
+        quantityInput.addEventListener("change", function () {
+            const max = Number(quantityInput.max);
+            let value = Number(quantityInput.value);
+
+            if (!Number.isFinite(value)) value = 1;
+
+            quantityInput.value = Math.max(
+                1, Math.min(max, Math.floor(value))
+            );
+
+            updateHamper();
+        });
+    });
+
+    document.getElementById("clear-hamper").addEventListener(
+        "click", function () {
+            cards.forEach(function (card) {
+                card.querySelector(".hamper-check").checked = false;
+                card.querySelector(".hamper-qty").value = 1;
+            });
+
+            document.getElementById("gift-message").value = "";
+            updateHamper();
+        }
+    );
+
+    form.addEventListener("submit", function (event) {
+        updateHamper();
+
+        if (JSON.parse(hiddenItems.value).length === 0) {
+            event.preventDefault();
+            alert("Please select at least one gift.");
+        }
+    });
+
+    updateHamper();
+});
+</script>
+
+{% endblock %}

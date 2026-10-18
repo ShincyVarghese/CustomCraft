@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Cart, CartItem
 from products.models import Product
+from django.contrib import messages
+from django.views.decorators.http import require_POST
 
 # Create your views here.
 
@@ -20,31 +22,26 @@ def get_cart(request):
 
     return cart
 
+
+@require_POST
 def add_to_cart(request, product_id):
-    if request.method != 'POST':
-        return redirect('product_detail', product_id=product_id)
-
     product = get_object_or_404(Product, id=product_id)
-
-    cart = get_cart(request)
 
     try:
         quantity = int(request.POST.get('quantity', 1))
     except (TypeError, ValueError):
-        quantity = 1
+        messages.error(request, "Please enter a valid quantity.")
+        return redirect('product_detail', product_id=product_id)
 
     if quantity < 1:
-        quantity = 1
+        messages.error(request, "Quantity must be at least 1.")
+        return redirect('product_detail', product_id=product_id)
 
-    if quantity > product.stock:
-        return render(
-            request,
-            'product_detail.html',
-            {
-                'product': product,
-                'error': 'Requested quantity exceeds available stock.'
-            }
-        )
+    if product.stock <= 0:
+        messages.error(request, "Sorry, this product is out of stock.")
+        return redirect('product_detail', product_id=product_id)
+
+    cart = get_cart(request)
 
     cart_item = CartItem.objects.filter(
         cart=cart,
@@ -52,17 +49,16 @@ def add_to_cart(request, product_id):
         customization__isnull=True
     ).first()
 
-    if cart_item:
-        if cart_item.quantity + quantity > product.stock:
-            return render(
-                request,
-                'product_detail.html',
-                {
-                    'product': product,
-                    'error': 'Requested quantity exceeds available stock.'
-                }
-            )
+    current_quantity = cart_item.quantity if cart_item else 0
 
+    if current_quantity + quantity > product.stock:
+        messages.error(
+            request,
+            f"Only {product.stock - current_quantity} more item(s) can be added."
+        )
+        return redirect('product_detail', product_id=product_id)
+
+    if cart_item:
         cart_item.quantity += quantity
         cart_item.save()
     else:
@@ -72,19 +68,38 @@ def add_to_cart(request, product_id):
             quantity=quantity
         )
 
+    messages.success(request, "Product added to your cart.")
     return redirect('cart')
 
 
 def cart_view(request):
-
     cart = get_cart(request)
 
-    cart_items = cart.items.select_related('product').all()
+    # Retrieve regular product cart items.
+    cart_items = cart.items.select_related(
+        'product',
+        'customization'
+    ).all()
 
-    total = sum(
+    # Retrieve custom hampers and their selected products.
+    custom_hampers = cart.custom_hampers.prefetch_related(
+        'hamper_items__product'
+    ).all()
+
+    # Calculate the regular product total.
+    product_total = sum(
         item.product.price * item.quantity
         for item in cart_items
     )
+
+    # Calculate the custom hamper total.
+    hamper_total = sum(
+        hamper.total_price
+        for hamper in custom_hampers
+    )
+
+    # Calculate the combined cart total.
+    total = product_total + hamper_total
 
     return render(
         request,
@@ -92,12 +107,16 @@ def cart_view(request):
         {
             'cart': cart,
             'cart_items': cart_items,
+            'custom_hampers': custom_hampers,
+            'product_total': product_total,
+            'hamper_total': hamper_total,
             'total': total,
         }
     )
 
-def update_cart(request, item_id):
 
+@require_POST
+def update_cart(request, item_id):
     cart = get_cart(request)
 
     cart_item = get_object_or_404(
@@ -106,20 +125,35 @@ def update_cart(request, item_id):
         cart=cart
     )
 
-    quantity = int(request.POST.get('quantity', 1))
+    try:
+        quantity = int(request.POST.get('quantity', 1))
+    except (TypeError, ValueError):
+        messages.error(request, "Please enter a valid quantity.")
+        return redirect('cart')
 
-    if quantity > 0:
-        cart_item.quantity = quantity
-        cart_item.save()
+    if quantity <= 0:
+        cart_item.delete()
+        messages.success(request, "Item removed from your cart.")
+
+    elif quantity > cart_item.product.stock:
+        messages.error(
+            request,
+            f"Only {cart_item.product.stock} items are available."
+        )
 
     else:
-        cart_item.delete()
+        cart_item.quantity = quantity
+        cart_item.save()
+        messages.success(request, "Cart quantity updated.")
 
     return redirect('cart')
 
 
-def remove_from_cart(request, item_id):
 
+
+@require_POST
+def remove_from_cart(request, item_id):
+    
     cart = get_cart(request)
 
     cart_item = get_object_or_404(
@@ -129,5 +163,6 @@ def remove_from_cart(request, item_id):
     )
 
     cart_item.delete()
+    messages.success(request, "Item removed from your cart.")
 
     return redirect('cart')

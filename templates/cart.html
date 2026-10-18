@@ -1,251 +1,230 @@
+
 {% extends 'base.html' %}
 
-{% block title %}
-Your Cart | CustomCraft
-{% endblock %}
+{% block title %}Your Cart | CustomCraft{% endblock %}
 
 {% block content %}
 
-<section class="cart-section">
-
+ <section class="cart-section">
     <div class="cart-container">
 
-        <!-- HEADER -->
-        <div class="cart-header">
-
-            <p class="cart-small-title">
-                YOUR SHOPPING BAG
-            </p>
-
+         <div class="cart-header">
+            <p class="cart-small-title">YOUR SHOPPING BAG</p>
             <h1>Your Cart</h1>
-
-            <p>
-                Review your personalized gifts before checkout.
-            </p>
-
+            <p>Review your personalized gifts before checkout.</p>
         </div>
-{% if cart_items %}
 
-    <div class="cart-layout">
+        {% if cart_items or custom_hampers %}
 
-        <!-- CART ITEMS -->
-        <div class="cart-items">
+        <div class="cart-layout">
 
-            {% for item in cart_items %}
+            <div class="cart-items">
 
-            <div class="cart-item">
+                <!-- REGULAR PRODUCTS -->
+                {% for item in cart_items %}
+                <div class="cart-item">
 
-                <!-- PRODUCT IMAGE -->
-                <div class="cart-item-image">
-
-                    {% if item.product.image %}
-                        <img
-                            src="{{ item.product.image.url }}"
-                            alt="{{ item.product.name }}"
-                        >
+                    <div class="cart-item-image">
+                        {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}"
+                                 alt="{{ item.product.name }}">
                         {% else %}
                             <span>No Image</span>
                         {% endif %}
+                    </div>
 
-                </div>
+                    <div class="cart-item-details">
 
-                <!-- PRODUCT DETAILS -->
-                <div class="cart-item-details">
-
-                    <p class="cart-category">
-                        {{ item.product.category.name }}
-                    </p>
-
-                    <h2>{{ item.product.name }}</h2>
-
-                    <p class="cart-price">
-                        ₹{{ item.product.price }}
-                    </p>
-
-                    <!-- CUSTOMIZATION DETAILS -->
-                    {% if item.customization %}
-
-                    <div class="customization-details">
-
-                        <h3>Your Personalization</h3>
-
-                        {% if item.customization.color %}
-                        <p>
-                            <strong>Color:</strong>
-                            {{ item.customization.color }}
+                        <p class="cart-category">
+                            {{ item.product.category.name }}
                         </p>
-                        {% endif %}
 
-                        {% if item.customization.name_to_print %}
-                        <p>
-                            <strong>Name:</strong>
-                            {{ item.customization.name_to_print }}
-                        </p>
-                        {% endif %}
+                        <h2>{{ item.product.name }}</h2>
+                        <p class="cart-price">₹{{ item.product.price }}</p>
+
+                        {% if item.customization %}
+                        <div class="customization-details">
+                            <h3>Your Personalization</h3>
+
+                            {% if item.customization.color %}
+                            <p><strong>Color:</strong>
+                                {{ item.customization.color }}</p>
+                            {% endif %}
+
+                            {% if item.customization.name_to_print %}
+                            <p><strong>Name:</strong>
+                                {{ item.customization.name_to_print }}</p>
+                            {% endif %}
 
                             {% if item.customization.message %}
-                        <p>
-                            <strong>Message:</strong>
-                                {{ item.customization.message }}
+                            <p><strong>Message:</strong>
+                                {{ item.customization.message }}</p>
+                            {% endif %}
+
+                            {% if item.customization.photo %}
+                            <div class="customization-photo">
+                                <p><strong>Uploaded Photo:</strong></p>
+                                <img src="{{ item.customization.photo.url }}"
+                                     alt="Customized photo">
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        <p class="cart-quantity">
+                            <strong>Quantity:</strong> {{ item.quantity }}
                         </p>
-                        {% endif %}
 
-                        {% if item.customization.photo %}
-                        <div class="customization-photo">
-
-                                <p>
-                                    <strong>Uploaded Photo:</strong>
-                                </p>
-
-                                <img
-                                    src="{{ item.customization.photo.url }}"
-                                    alt="Customized photo"
-                                >
-
-                    </div>
-                        {% endif %}
-
-                    </div>
-
-                    {% endif %}
-
-                    <!-- QUANTITY -->
-                    <p class="cart-quantity">
-                        <strong>Quantity:</strong>
-                        {{ item.quantity }}
-                    </p>
-
-                        <!-- UPDATE AND REMOVE -->
                         <div class="cart-actions">
-
-                            <form
-                                method="POST"
-                                action="{% url 'update_cart' item.id %}"
-                            >
+                            <form method="POST"
+                                  action="{% url 'update_cart' item.id %}">
                                 {% csrf_token %}
 
                                 <div class="quantity-control">
-
                                     <label for="quantity-{{ item.id }}">
                                         Quantity
                                     </label>
-
-                                    <input
-                                        type="number"
-                                        id="quantity-{{ item.id }}"
-                                        name="quantity"
-                                        value="{{ item.quantity }}"
-                                        min="1"
-                                        max="{{ item.product.stock }}"
-                                        required
-                                    >
-
-                                    <button type="submit">
-                                        Update
-                                    </button>
-
+                                    <input type="number"
+                                           id="quantity-{{ item.id }}"
+                                           name="quantity"
+                                           value="{{ item.quantity }}"
+                                           min="1"
+                                           max="{{ item.product.stock }}"
+                                           required>
+                                    <button type="submit">Update</button>
                                 </div>
-
                             </form>
 
-                            <form
-                                method="POST"
-                                action="{% url 'remove_from_cart' item.id %}"
-                            >
+                            <form method="POST"
+                                  action="{% url 'remove_from_cart' item.id %}">
                                 {% csrf_token %}
-
-                                <button
-                                    type="submit"
-                                    class="remove-cart-item"
-                                >
-                                    Remove
-                                </button>
-
+                                <button type="submit" class="remove-cart-item">Remove</button>
+      
+        
                             </form>
+                         </div>
 
-                        </div>
-
-                        <!-- ITEM TOTAL -->
-                    <p class="cart-item-total">
-
-                        <strong>Item Total:</strong>
-
-                        ₹{% widthratio item.product.price 1 item.quantity %}
-
-                    </p>
+                        <p class="cart-item-total">
+                            <strong>Item Total:</strong>
+                            ₹{{ item.product.price|floatformat:2 }}
+                        </p>
 
                     </div>
+                 </div>
+                {% endfor %}
 
-                </div>
 
+                <!-- CUSTOM HAMPERS -->
+                {% for hamper in custom_hampers %}
+                <div class="cart-item custom-hamper-cart-item">
+
+                    <div class="cart-item-image hamper-cart-icon">
+                        <span>🎁</span>
+                    </div>
+
+                    <div class="cart-item-details">
+
+                        <p class="cart-category">PERSONALIZED GIFT BOX</p>
+                        <h2>Custom Gift Hamper #{{ hamper.id }}</h2>
+
+                        <h3>Selected Gifts</h3>
+
+                        <ul class="hamper-cart-list">
+                            {% for hamper_item in hamper.hamper_items.all %}
+                            <li>
+                                {{ hamper_item.product.name }}
+                                × {{ hamper_item.quantity }}
+                                — ₹{{ hamper_item.subtotal|floatformat:2 }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+
+                        {% if hamper.gift_message %}
+                        <div class="customization-details">
+                            <p><strong>Your Gift Message:</strong></p>
+                            <p>{{ hamper.gift_message }}</p>
+                        </div>
+                        {% endif %}
+
+                        <p class="cart-item-total">
+                            <strong>Hamper Total:</strong>
+                            ₹{{ hamper.total_price|floatformat:2 }}
+                        </p>
+
+                     </div>
+                 </div>
                 {% endfor %}
 
             </div>
+
 
             <!-- ORDER SUMMARY -->
             <div class="cart-summary">
 
                 <h2>Order Summary</h2>
 
-            <div class="summary-row">
-                <span>Items</span>
-                <span>{{ cart_items|length }}</span>
-            </div>
+                <div class="summary-row">
+                    <span>Regular Products</span>
+                    <span>{{ cart_items|length }}</span>
+                </div>
 
-            <div class="summary-line"></div>
+                <div class="summary-row">
+                    <span>Custom Hampers</span>
+                    <span>{{ custom_hampers|length }}</span>
+                </div>
+
+                <div class="summary-row">
+                    <span>Products Subtotal</span>
+                    <span>₹{{ product_total|floatformat:2 }}</span>
+                </div>
+
+                <div class="summary-row">
+                    <span>Hampers Subtotal</span>
+                    <span>₹{{ hamper_total|floatformat:2 }}</span>
+                </div>
+
+                <div class="summary-line"></div>
 
                 <div class="summary-total">
                     <span>Total</span>
-                    <strong>₹{{ total }}</strong>
+                    <strong>₹{{ total|floatformat:2 }}</strong>
                 </div>
 
-                <!-- FIXED CHECKOUT LINK -->
-                <a
-                    href="{% url 'checkout' %}"
-                    class="checkout-btn"
-                >
+                <a href="{% url 'checkout' %}" class="checkout-btn">
                     Proceed to Checkout
                 </a>
 
-            <a
-                 href="{% url 'shop' %}"
-                class="continue-shopping-btn"
-            >
-                Continue Shopping
-            </a>
+                <a href="{% url 'shop' %}"
+                   class="continue-shopping-btn">
+                    Continue Shopping
+                </a>
 
             </div>
 
-    </div>
+        </div>
 
         {% else %}
 
         <!-- EMPTY CART -->
         <div class="empty-cart">
-
-            <div class="empty-cart-icon">
-                🛍️
-            </div>
-
+            <div class="empty-cart-icon">🛍️</div>
             <h2>Your cart is empty</h2>
+            <p>Looks like you haven't added any gifts yet.</p>
 
-            <p>
-                Looks like you haven't added any gifts yet.
-            </p>
+            <a href="{% url 'shop' %}"
+               class="continue-shopping-btn">
+                Continue Shopping
+            </a>
 
-        <a
-            href="{% url 'shop' %}"
-            class="continue-shopping-btn"
-        >
-            Continue Shopping
-        </a>
-
-    </div>
+            <a href="{% url 'customize_hamper' %}"
+               class="continue-shopping-btn">
+                Build a Gift Box
+            </a>
+        </div>
 
         {% endif %}
 
     </div>
-
-</section>
+ </section>
 
 {% endblock %}

@@ -114,81 +114,6 @@
 <script src="{% static 'accounts/js/slider.js' %}" defer></script>
 
 
-
-
-
-
-
-<!-- =========================================================
-     2. SHOP BY OCCASIONS
-========================================================= -->
-
-<section class="occasion-section">
-    <div class="occasion-container">
-
-        <div class="occasion-heading">
-            <span>FIND SOMETHING SPECIAL</span>
-            <h2>Shop By Occasions</h2>
-            <p>Thoughtful gifts for every special moment.</p>
-        </div>
-
-        <div class="occasion-grid">
-
-            <a href="{% url 'shop' %}?category=Wedding Gifts"
-               class="occasion-card">
-                <div class="img-wrapper">
-                    <img
-                        src="{% static 'accounts/images/categories/wedding.jpg.jpg' %}"
-                        alt="Wedding Gifts">
-                </div>
-                <h3>Birthday Gifts</h3>
-            </a>
-
-            <a href="{% url 'shop' %}?category=Corporate Gifts"
-               class="occasion-card">
-                <div class="img-wrapper">
-                    <img
-                        src="{% static 'accounts/images/categories/birthday.jpg.webp' %}"
-                        alt="Corporate Gifts">
-                </div>
-                <h3>Self-Care & Beauty Hampers</h3>
-            </a>
-
-            <a href="{% url 'shop' %}?category=Baby Gifts"
-               class="occasion-card">
-                <div class="img-wrapper">
-                    <img
-                        src="{% static 'accounts/images/categories/babygifts.jpg.jpg' %}"
-                        alt="Baby Gifts">
-                </div>
-                <h3>Baby & Newborn Gifts</h3>
-            </a>
-
-            <a href="{% url 'shop' %}?category=Baby Clothing"
-               class="occasion-card">
-                <div class="img-wrapper">
-                    <img
-                        src="{% static 'accounts/images/categories/babyclothing.jpg' %}"
-                        alt="Baby Clothing">
-                </div>
-                <h3>Baby Clothing</h3>
-            </a>
-
-            <a href="{% url 'shop' %}?category=Birthday Gifts"
-               class="occasion-card">
-                <div class="img-wrapper">
-                    <img
-                        src="{% static 'accounts/images/categories/birthday.jpg.webp' %}"
-                        alt="Birthday Gifts">
-                </div>
-                <h3>Wedding &amp; Special Occasions</h3>
-            </a>
-
-        </div>
-    </div>
-</section>
-
-
 <!-- =========================================================
      3. TRENDING GIFTS
 ========================================================= -->
@@ -238,9 +163,26 @@
 
                         <h3>{{ product.name }}</h3>
 
+                    <div class="trending-price-row">
                         <p class="trending-price">
-                            ₹{{ product.price }}
+                          ₹{{ product.price}}  
                         </p>
+
+                        <form method="POST"
+                            action="{% url 'add_to_wishlist' product.id %}"
+                            class="trending-wishlist-form">
+                            {% csrf_token %}
+
+                            <button type="submit"
+                                    class="trending-wishlist-btn"
+                                    aria-label="Add {{ product.name }} to wishlist"
+                                    title="Add to wishlist">
+                                
+                                ♡
+                                </button>
+                        
+                        </form>
+                    </div>
 
                         {% if product.stock > 0 %}
                             <a
@@ -286,11 +228,77 @@
 </section>
 
 
+<section class="occasion-section">
+    <div class="occasion-container">
+
+        <div class="occasion-heading">
+            <span>FIND SOMETHING SPECIAL</span>
+            <h2>Shop By Category</h2>
+            <p>Thoughtful gifts for every special moment.</p>
+        </div>
+
+        <div class="occasion-grid">
+
+            <a href="{% url 'shop' %}?category=Birthday Gifts"
+               class="occasion-card">
+                <div class="img-wrapper">
+                    <img
+                        src="{% static 'accounts/images/categories/birthday.jpg.webp' %}"
+                        alt="Birthday gift hampers">
+                </div>
+                <h3>Birthday Gifts</h3>
+            </a>
+
+            <a href="{% url 'shop' %}?category=Hampers"
+               class="occasion-card">
+                <div class="img-wrapper">
+                    <img
+                        src="{% static 'accounts/images/categories/gift.jpg.jpg' %}"
+                        alt="Self-care and beauty hampers">
+                </div>
+                <h3>Self-Care &amp; Beauty Hampers</h3>
+            </a>
+
+            <a href="{% url 'shop' %}?category=Baby Gifts"
+               class="occasion-card">
+                <div class="img-wrapper">
+                    <img
+                        src="{% static 'accounts/images/categories/newborns.jpg' %}"
+                        alt="Baby and newborn gifts">
+                </div>
+                <h3>Baby &amp; Newborn Gifts</h3>
+            </a>
+
+            <a href="{% url 'shop' %}?category=Anniversary Gifts"
+               class="occasion-card">
+                <div class="img-wrapper">
+                    <img
+                        src="{% static 'accounts/images/categories/wedding.jpg.jpg' %}"
+                        alt="Anniversary gifts">
+                </div>
+                <h3>Anniversary Gifts</h3>
+            </a>
+
+            <a href="{% url 'shop' %}?category=Wedding Gifts"
+               class="occasion-card">
+                <div class="img-wrapper">
+                    <img
+                        src="{% static 'accounts/images/categories/special occasions.jpg' %}"
+                        alt="Wedding and special occasion gifts">
+                </div>
+                <h3>Wedding &amp; Special Occasions</h3>
+            </a>
+
+        </div>
+    </div>
+</section>
+
+
 <!-- =========================================================
      4. WHY CUSTOMCRAFT
 ========================================================= -->
 
-<section class="why-section">
+<section class="why-section" id="why-customcraft">
     <div class="container">
 
         <div class="section-header">
