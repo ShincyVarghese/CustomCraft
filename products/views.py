@@ -7,24 +7,65 @@ from django.db import transaction
 
 from products.models import Product
 from cart.models import Cart, CustomHamper, HamperItem
+from django.db.models import Q
 
+
+from django.db.models import Q
 
 def shop(request):
-    return render(request, 'product/shop.html')
+    search_query = request.GET.get('q', '').strip()
+    print("SEARCH QUERY:", search_query)
+    category = request.GET.get('category', '').strip()
+
+    products = Product.objects.select_related('category').all()
+
+    if category:
+        products = products.filter(
+            category__name__iexact=category
+        )
+
+    if search_query:
+        products = products.filter(
+            Q(name__icontains=search_query) |
+            Q(description__icontains=search_query) |
+            Q(category__name__icontains=search_query)
+        )
+
+    return render(request, 'product/shop.html', {
+        'products': products,
+        'selected_category': category,
+        'search_query': search_query,
+    })
+
+
 
 
 def custom_order(request):
     return render(request, 'products/custom_order.html')
 
 
+
 def customize_hamper(request):
-    products = Product.objects.filter(stock__gt=0).order_by('name')
+    products = Product.objects.filter(
+        stock__gt=0,
+        category__name__in=[
+            'Gift Hampers',
+            'Personalized Gifts',
+            'Handmade Gifts',
+        ]
+    ).exclude(
+        name__in=[
+            'Self-Care Hamper',
+            'Skincare Essentials Hamper',
+        ]
+    ).order_by('name')
 
     return render(
         request,
         'customize_hamper.html',
         {'products': products}
     )
+
 
 
 def save_hamper(request):

@@ -213,3 +213,5 @@ def customize_product(request, product_id):
         'customize_product.html',
         {'product': product}
     )
+def contact(request):
+    return render(request, 'contact.html')

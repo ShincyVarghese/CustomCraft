@@ -18,7 +18,13 @@ Shop | CustomCraft
                 CUSTOMCRAFT COLLECTION
             </p>
 
-            <h1>Shop Personalized Gifts</h1>
+            <h1>
+                {% if selected_category %}
+                    {{ selected_category }}
+                {% else %}    
+                    Shop Personalized Gifts
+                {% endif %}
+            </h1>
 
             <p>
                 Find something special for every person
@@ -64,6 +70,18 @@ Shop | CustomCraft
                    class="{% if request.GET.category == 'Gift Hampers' %}active{% endif %}">
                     Gift Hampers
                 </a>
+
+                <a href="{% url 'shop' %}?category=Baby%20%26%20Newborn%20Gifts"
+                   class="{% if request.GET.category == 'Baby &amp; Newborn Gifts' %}active{% endif %}">
+                     Baby &amp; Newborn Gifts
+                </a>
+
+                
+                <a href="{% url 'shop' %}?category=Self-Care%20%26%20Beauty%20Hampers"
+                    class="{% if request.GET.category == 'Self-Care%20%26%20Beauty%20Hampers' %}active{% endif %}">
+                  Self-Care &amp; Beauty Hampers
+                </a>
+
 
                 <a href="{% url 'shop' %}?category=Handmade Gifts"
                    class="{% if request.GET.category == 'Handmade Gifts' %}active{% endif %}">

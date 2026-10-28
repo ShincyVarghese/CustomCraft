@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="contact-page">
+
+    <div class="contact-banner">
+        <h1>Contact Us</h1>
+        <p><a href="/">Home</a>&nbsp; &gt; &nbsp; Contact Us</p>
+    </div>
+
+    <div class="contact-info-bar">
+        
+        
+        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=officiallycustomcraft@gmail.com"
+            class="cc-contact-item"
+            target="_blank"
+            rel="noopener noreferrer">
+
+            <span class="cc-contact-icon cc-email-icon">
+            <svg viewBox="0 0 24 24"
+                   width="30" height="30"
+                   fill="none"
+                   stroke="currentColor"
+                   stroke-width="1.8"
+                   stroke-linecap="round"
+                   stroke-linejoin="round"
+                   aria-hidden="true">
+
+                   <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                   <path d="m3 7 9 6 9-6"></path>
+                </svg>
+            </span>
+
+            <span>Email Us</span>
+        </a>
+
+
+            
+
+        
+        <a href="https://wa.me/91XXXXXXXXXX"
+           class="cc-contact-item"
+           target="_blank"
+           rel="noopener noreferrer">
+
+           <span class="cc-contact-divider">
+           <svg viewBox="0 0 24 24"
+                width="30" height="30"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true">
+
+                <path d="M20.5 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20l1.2-4.7A8.5 8.5 0 1 1 20.5 11.5Z"></path>
+                <path d="M8.5 8.2c.3-.6.6-.6 1-.6h.4c.2 0 .4.1.5.4l.8 1.8c.1.2.1.4-.1.6l-.6.7c-.2.2-.2.4 0 .7.5.9 1.2 1.6 2.1 2.1.2.1.4.1.6-.1l.8-.9c.2-.2.4-.2.6-.1l1.7.8c.3.1.4.3.4.5 0 .4-.2 1.1-.6 1.5-.4.4-1.1.7-1.8.6-1.2-.2-2.5-.8-3.8-2-1.2-1.1-2-2.5-2.2-3.6-.2-1 .2-1.9.6-2.4Z"></path>
+            </svg>
+        </span>
+
+       <span>WhatsApp Us</span>
+    </a>
+
+
+        
+        <a href="https://instagram.com/YOUR_ACCOUNT"
+           class="cc-contact-item"
+           target="_blank"
+           rel="noopener noreferrer">
+
+        <span class="cc-contact-divider">
+            <svg viewBox="0 0 24 24"
+                width="30" height="30"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="5"></rect>
+                <circle cx="12" cy="12" r="4"></circle>
+                <circle cx="17.5" cy="6.5" r="1"
+                        fill="currentColor" stroke="none"></circle>
+            </svg>
+        </span>
+
+        <span>Instagram</span>
+    </a>
+
+        
+    </div>
+    <div class="contact-intro">
+        <h2>Get in Touch</h2>
+        <p>
+            Have a question in mind? Get in touch with us
+            and let's create a gift that speaks from the heart.
+        </p>
+    </div>
+
+    <form class="contact-form" method="post">
+        {% csrf_token %}
+
+        <div class="contact-form-grid">
+            <div class="contact-field">
+                <label for="contact-name">Name *</label>
+                <input type="text" id="contact-name"
+                       name="name" required>
+            </div>
+
+            <div class="contact-field">
+                <label for="contact-phone">Phone</label>
+                <input type="tel" id="contact-phone"
+                       name="phone">
+            </div>
+
+            <div class="contact-field full-width">
+                <label for="contact-email">Email *</label>
+                <input type="email" id="contact-email"
+                       name="email" required>
+            </div>
+
+            <div class="contact-field full-width">
+                <label for="contact-message">Message *</label>
+                <textarea id="contact-message"
+                          name="message" rows="5"
+                          required></textarea>
+            </div>
+        </div>
+
+        <button type="submit" class="contact-submit">
+            Send Message
+        </button>
+    </form>
+</section>
+
+</section>
+
+<a class="whatsapp-float"
+   href="https://wa.me/91XXXXXXXXXX"
+   target="_blank"
+   rel="noopener noreferrer"
+   aria-label="Contact us on WhatsApp">
+    <span>WhatsApp</span>
+</a>
+{% endblock %}

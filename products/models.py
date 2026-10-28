@@ -41,6 +41,12 @@ class Product(models.Model):
         null=True
     )
 
+    hover_image = models.ImageField(
+        upload_to='products/',
+        blank=True,
+        null=True
+    )
+
     stock = models.PositiveIntegerField(default=0)
 
     created_at = models.DateField(
